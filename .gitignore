@@ -9,5 +9,3 @@ __pycache__/
 *.pt
 *.onnx
 *.engine
-*.ipynb
-*.mp4
