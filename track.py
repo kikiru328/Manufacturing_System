@@ -11,7 +11,6 @@ os.environ["NUMEXPR_NUM_THREADS"] = "1"
 import sys
 from pathlib import Path
 import numpy as np
-import screeninfo
 import torch
 import torch.backends.cudnn as cudnn
 
@@ -172,6 +171,9 @@ def run(
 
         # Process detections
         for i, det in enumerate(pred):  # detections per image
+            
+            print('Process detected', i) # Data From Webcam
+            
             seen += 1
             if webcam:  # nr_sources >= 1
                 p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -179,6 +181,7 @@ def run(
                 s += f'{i}: '
                 txt_file_name = p.name
                 save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
+                
             else:
                 p, im0, _ = path, im0s.copy(), getattr(dataset, 'frame', 0)
                 p = Path(p)  # to Path
@@ -233,6 +236,7 @@ def run(
                         
                         ############### COUNTING ##############
                         count_obj(bboxes, w, h, id)
+                        
                         if save_txt:
                             # to MOT format
                             bbox_left = output[0]
@@ -263,60 +267,56 @@ def run(
             # Stream results
             im0 = annotator.result()  # -------------------- Source Webcam
 
-            # Background
+            
+            ################################## Create output image #################################
+            global count
+            from PIL import Image
+            from PIL import ImageFont
+            from PIL import ImageDraw
+            
+            ## Background ##
             imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
-            if show_vid:
-                
-                ######################### Counting ##########################
-                global count
-                from PIL import Image
-                from PIL import ImageFont
-                from PIL import ImageDraw
-                ### LINE ###
-                color = (0, 255, 0)
-                start_point = (int(w/2), 0)
-                end_point = (int(w/2), h)
-                cv2.line(im0, start_point, end_point, color, thickness=2)
+            
+            ## LINE ##
+            color = (0, 255, 0)
+            start_point = (int(w/2), 0)
+            end_point = (int(w/2), h)
+            cv2.line(im0, start_point, end_point, color, thickness=2)
+            
+            ## NUMPY ##
+            background = Image.fromarray(imb)
+            draw = ImageDraw.Draw(background)
+            
+            ## TEXT ##
+            thickness = 3
+            org = (200, 200)
+            order_count_text = f"옵션 : {order_data['Option'][order_index]}"
+            order_org = (200, 400)
+            alpha = 0.6
+            
+            font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+            
+                        
+            draw.text(org, f'개수 : {str(count)}',
+                        font=font, fill=(0, 255, 0))  # -- 개수 text
+            draw.text(order_org, order_count_text, font=font,
+                        fill=(0, 255, 0))  # -- 내            
+            
 
-                ### Add Im0 and Imb ###
-                background = Image.fromarray(imb)
-                draw = ImageDraw.Draw(background)
-
-                ### Text Object ###
-                thickness = 3
-                org = (800, 600)  # coordinates
-                # if count == 0:order_count_text = '0'
-                order_count_text = f"옵션 : {order_data['Option'][order_index]}"
-
-                order_org = (800, 800)
-                alpha = 0.6
+            background_with_text = np.array(background)  # ------- to numpy            
+            
+            
+            if show_vid and i == 0:
+                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
+                # print(i)
                 
-                ### MAC ###
-                # font = ImageFont.truetype(
-                #     "/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
-                
-                ### WINDOWS ###
-                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-                
-                screen_id =0
+                import screeninfo
+                screen_id = 1
                 screen = screeninfo.get_monitors()[screen_id]               
                 screen_width, screen_height = screen.width, screen.height
                 
-                # Drawing on background
-                draw.text(org, f'개수 : {str(count)}',
-                          font=font, fill=(0, 255, 0))  # -- 개수 text
-                draw.text(order_org, order_count_text, font=font,
-                          fill=(0, 255, 0))  # -- 내용 text
-
-                background_with_text = np.array(background)  # ------- to numpy
-
-                # Adding
-                add_image = cv2.addWeighted(
-                    im0, alpha, background_with_text, (1-alpha), 0)
-                
                 add_image = cv2.resize(add_image, (screen_width, screen_height))
-                # Showing videos
-                # cv2.imshow(str(p), im0)
+                
                 add_image[0,0] = 0
                 add_image[screen_height-2, 0] = 0
                 add_image[0, screen_width-2] = 0
@@ -325,11 +325,16 @@ def run(
                 cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
                 cv2.moveWindow(window_name, screen.x -1, screen.y-1)
                 cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-                
-                # cv2.imshow(str(p), add_image)
+                    
                 cv2.imshow(window_name, add_image)
                 cv2.waitKey(1)  # 1 millisecond                
-
+                
+            elif show_vid and i == 1:
+                # print(1)
+                window_name = '1'
+                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
+                cv2.imshow(window_name, add_image)
+                cv2.waitKey(1)
 
             # Save results (image with detections)
             if save_vid:
