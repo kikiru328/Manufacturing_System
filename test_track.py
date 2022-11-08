@@ -235,7 +235,7 @@ def run(
                             cls = output[5]
                             
                             ############## COUNTING ##############
-                            count_obj(count_web_1, bboxes, w, h, id)
+                            count_obj(count_web_1,data_web_1, bboxes, w, h, id,order_index_web_1)
                             
                             if save_txt:
                                 # to MOT format
@@ -273,7 +273,7 @@ def run(
                 
                 
                 if show_vid and i == 0:
-                    # global count
+                    global count_web_1, order_index_web_1
                     from PIL import Image
                     from PIL import ImageFont
                     from PIL import ImageDraw
@@ -499,9 +499,8 @@ def main(opt):
     run(**vars(opt))
     
 # COUNITNG #
-def count_obj(count, box, w, h, id):
-    # global count, data, order_data, order_index
-
+def count_obj(count, data, box, w, h, id, order_index):
+    global count_web_1, data_web_1, order_data, order_index_web_1
     center_coordinates = (
         int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
 
@@ -512,6 +511,7 @@ def count_obj(count, box, w, h, id):
 
         if count > int(order_data_count[order_index]):
             order_index += 1
+    return count, data, box, w, h , id, order_index
 
 if __name__ == "__main__":
     opt = parse_opt()
