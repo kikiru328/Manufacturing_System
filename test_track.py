@@ -333,7 +333,7 @@ def run(
                     cv2.imshow(window_name, add_image)
                     cv2.waitKey(1)  # 1 millisecond                               
             elif i == 1:
-                seen+=1
+                seen+=1   
                 # print(1)
                 window_name = '1'
                 add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
