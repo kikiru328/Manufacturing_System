@@ -19,9 +19,9 @@ ROOT = FILE.parents[0]  # yolov5 strongsort root directory
 WEIGHTS = ROOT / 'weights'
 
 ################ Counting Datas ######################
-count = 0
-order_index = 0
-data = []
+count_web_1 = 0
+order_index_web_1 = 0
+data_web_1 = []
 
 
 def read_order(path, time):
