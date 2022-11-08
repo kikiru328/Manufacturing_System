@@ -179,7 +179,7 @@ def run(
             print(f'{seen:#^40}')
             if i == 0 :
                 seen += 1 
-                print(f'Process detected : {i:#^60}') # Data From Webcam
+                print(f'Process detected : {   i   :#^60}') # Data From Webcam
                 
                 if webcam:  # nr_sources >= 1
                     p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -272,7 +272,7 @@ def run(
 
                 
                 
-                if show_vid:
+                if show_vid and i == 0:
                     # global count
                     from PIL import Image
                     from PIL import ImageFont
@@ -333,11 +333,98 @@ def run(
                     cv2.imshow(window_name, add_image)
                     cv2.waitKey(1)  # 1 millisecond                               
             elif i == 1:
-                seen+=1   
+                seen += 1 
+                print(f'Process detected : {i:#^60}') # Data From Webcam
+                
+                if webcam:  # nr_sources >= 1
+                    p, im0, _ = path[i], im0s[i].copy(), dataset.count
+                    p = Path(p)  # to Path
+                    s += f'{i}: '
+                    txt_file_name = p.name
+                    save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
+                    
+                else:
+                    p, im0, _ = path, im0s.copy(), getattr(dataset, 'frame', 0)
+                    p = Path(p)  # to Path
+                    # video file
+                    if source.endswith(VID_FORMATS):
+                        txt_file_name = p.stem
+                        save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
+                    # folder with imgs
+                    else:
+                        txt_file_name = p.parent.name  # get folder name containing current img
+                        save_path = str(save_dir / p.parent.name)  # im.jpg, vid.mp4, ...
+                curr_frames[i] = im0
+
+                txt_path = str(save_dir / 'tracks' / txt_file_name)  # im.txt
+                s += '%gx%g ' % im.shape[2:]  # print string
+                imc = im0.copy() if save_crop else im0  # for save_crop
+
+                annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
+                
+                #### COUNTING ###
+                w, h = im0.shape[1], im0.shape[0]
+
+
+                if det is not None and len(det):
+                    # Rescale boxes from img_size to im0 size
+                    det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()  # xyxy
+
+                    # Print results
+                    for c in det[:, -1].unique():
+                        n = (det[:, -1] == c).sum()  # detections per class
+                        s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+
+                    # pass detections to strongsort
+                    t4 = time_sync()
+                    outputs[i] = tracker_list[i].update(det.cpu(), im0)
+                    t5 = time_sync()
+                    dt[3] += t5 - t4
+
+                    # draw boxes for visualization
+                    if len(outputs[i]) > 0:
+                        for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
+        
+                            bboxes = output[0:4]
+                            id = output[4]
+                            cls = output[5]
+                            
+                            ############## COUNTING ##############
+                            count_obj(count_web_1, bboxes, w, h, id)
+                            
+                            if save_txt:
+                                # to MOT format
+                                bbox_left = output[0]
+                                bbox_top = output[1]
+                                bbox_w = output[2] - output[0]
+                                bbox_h = output[3] - output[1]
+                                # Write MOT compliant results to file
+                                with open(txt_path + '.txt', 'a') as f:
+                                    f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
+                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
+
+                            if save_vid or save_crop or show_vid:  # Add bbox to image
+                                c = int(cls)  # integer class
+                                id = int(id)  # integer id
+                                label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
+                                    (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
+                                annotator.box_label(bboxes, label, color=colors(c, True))
+                                if save_crop:
+                                    txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
+                                    save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
+
+                    LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
+
+                else:
+                    #strongsort_list[i].increment_ages()
+                    LOGGER.info('No detections')
+
+                # Stream results
+                im0 = annotator.result()  # -------------------- Source Webcam   
                 # print(1)
                 window_name = '1'
-                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-                cv2.imshow(window_name, add_image)
+                # add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
+                cv2.imshow(window_name, im0)
                 cv2.waitKey(1)
 
             # Save results (image with detections)
