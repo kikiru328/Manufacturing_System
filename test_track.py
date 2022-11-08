@@ -22,6 +22,10 @@ WEIGHTS = ROOT / 'weights'
 count_web_1 = 0
 order_index_web_1 = 0
 data_web_1 = []
+
+count_web_2 = 0
+order_index_web_2 = 0
+data_web_2 = []
 # count = 0
 # order_index= 0
 # data = []
@@ -174,12 +178,13 @@ def run(
         dt[2] += time_sync() - t3
 
         # Process detections
+
         for i, det in enumerate(pred):  # detections per image
-            
+            seen += 1 
             print(f'{seen:#^40}')
             if i == 0 :
-                seen += 1 
-                print(f'Process detected : {   i   :#^60}') # Data From Webcam
+                
+                print(f'Process detected : {i}') # Data From Webcam
                 
                 if webcam:  # nr_sources >= 1
                     p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -235,7 +240,7 @@ def run(
                             cls = output[5]
                             
                             ############## COUNTING ##############
-                            count_obj(count_web_1,data_web_1, bboxes, w, h, id,order_index_web_1)
+                            count_obj_web_1(data_web_1, bboxes, w, h, id)
                             
                             if save_txt:
                                 # to MOT format
@@ -269,50 +274,50 @@ def run(
 
                 
                 ################################## Create output image #################################
+                print(f'Count_web_1 : {count_web_1}')
+                from PIL import Image
+                from PIL import ImageFont
+                from PIL import ImageDraw
+                
+                ## Background ##
+                imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
+                
+                ## LINE ##
+                color = (0, 255, 0)
+                start_point = (int(w/2), 0)
+                end_point = (int(w/2), h)
+                cv2.line(im0, start_point, end_point, color, thickness=2)
+                
+                ## NUMPY ##
+                background = Image.fromarray(imb)
+                draw = ImageDraw.Draw(background)
+                
+                ## TEXT ##
+                thickness = 3
+                org = (200, 200)
+                
+                
+                # order_count_text = f"옵션 : {order_data['Option'][order_index]}"
+                order_count_text = f"옵션 : {order_data['Option'][order_index_web_1]}"
+                order_org = (200, 400)
+                alpha = 0.6
+                
+                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                
+                            
+                # draw.text(org, f'개수 : {str(count)}',
+                #             font=font, fill=(0, 255, 0))  # -- 개수 text
+                draw.text(org, f'개수 : {str(count_web_1)}',
+                            font=font, fill=(0, 255, 0))  # -- 개수 text
+                draw.text(order_org, order_count_text, font=font,
+                            fill=(0, 255, 0))  # -- 내            
+                
 
+                background_with_text = np.array(background)  # ------- to numpy            
+                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
                 
                 
                 if show_vid and i == 0:
-                    global count_web_1, order_index_web_1
-                    from PIL import Image
-                    from PIL import ImageFont
-                    from PIL import ImageDraw
-                    
-                    ## Background ##
-                    imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
-                    
-                    ## LINE ##
-                    color = (0, 255, 0)
-                    start_point = (int(w/2), 0)
-                    end_point = (int(w/2), h)
-                    cv2.line(im0, start_point, end_point, color, thickness=2)
-                    
-                    ## NUMPY ##
-                    background = Image.fromarray(imb)
-                    draw = ImageDraw.Draw(background)
-                    
-                    ## TEXT ##
-                    thickness = 3
-                    org = (200, 200)
-                    # order_count_text = f"옵션 : {order_data['Option'][order_index]}"
-                    order_count_text = f"옵션 : {order_data['Option'][order_index_web_1]}"
-                    order_org = (200, 400)
-                    alpha = 0.6
-                    
-                    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-                    
-                                
-                    # draw.text(org, f'개수 : {str(count)}',
-                    #             font=font, fill=(0, 255, 0))  # -- 개수 text
-                    draw.text(org, f'개수 : {str(count_web_1)}',
-                                font=font, fill=(0, 255, 0))  # -- 개수 text
-                    draw.text(order_org, order_count_text, font=font,
-                                fill=(0, 255, 0))  # -- 내            
-                    
-
-                    background_with_text = np.array(background)  # ------- to numpy            
-                    add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-                    # print(i)
                     
                     import screeninfo
                     screen_id = 1
@@ -333,8 +338,7 @@ def run(
                     cv2.imshow(window_name, add_image)
                     cv2.waitKey(1)  # 1 millisecond                               
             elif i == 1:
-                seen += 1 
-                print(f'Process detected : {i:#^60}') # Data From Webcam
+                print(f'Process detected :  {i} ') # Data From Webcam
                 
                 if webcam:  # nr_sources >= 1
                     p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -390,7 +394,7 @@ def run(
                             cls = output[5]
                             
                             ############## COUNTING ##############
-                            count_obj(count_web_1, bboxes, w, h, id)
+                            count_obj_web_2(data_web_2, bboxes, w, h, id)
                             
                             if save_txt:
                                 # to MOT format
@@ -422,9 +426,51 @@ def run(
                 # Stream results
                 im0 = annotator.result()  # -------------------- Source Webcam   
                 # print(1)
+                print(f'Count_web_2 : {count_web_2}')
+                from PIL import Image
+                from PIL import ImageFont
+                from PIL import ImageDraw
+                
+                ## Background ##
+                imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
+                
+                ## LINE ##
+                color = (0, 255, 0)
+                start_point = (int(w/2), 0)
+                end_point = (int(w/2), h)
+                cv2.line(im0, start_point, end_point, color, thickness=2)
+                
+                ## NUMPY ##
+                background = Image.fromarray(imb)
+                draw = ImageDraw.Draw(background)
+                
+                ## TEXT ##
+                thickness = 3
+                org = (200, 200)
+                
+                
+                # order_count_text = f"옵션 : {order_data['Option'][order_index]}"
+                order_count_text = f"옵션 : {order_data['Option'][order_index_web_2]}"
+                order_org = (200, 400)
+                alpha = 0.6
+                
+                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                
+                            
+                # draw.text(org, f'개수 : {str(count)}',
+                #             font=font, fill=(0, 255, 0))  # -- 개수 text
+                draw.text(org, f'개수 : {str(count_web_2)}',
+                            font=font, fill=(0, 255, 0))  # -- 개수 text
+                draw.text(order_org, order_count_text, font=font,
+                            fill=(0, 255, 0))  # -- 내            
+                
+
+                background_with_text = np.array(background)  # ------- to numpy            
+                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)                
+                
                 window_name = '1'
                 # add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-                cv2.imshow(window_name, im0)
+                cv2.imshow(window_name, add_image)
                 cv2.waitKey(1)
 
             # Save results (image with detections)
@@ -499,19 +545,32 @@ def main(opt):
     run(**vars(opt))
     
 # COUNITNG #
-def count_obj(count, data, box, w, h, id, order_index):
+def count_obj_web_1(data, box, w, h, id):
     global count_web_1, data_web_1, order_data, order_index_web_1
     center_coordinates = (
         int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-
     if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
-        count += 1
+        # count += 1
+        count_web_1 += 1
         data.append(id)
         order_data_count = order_data['Count']
 
-        if count > int(order_data_count[order_index]):
-            order_index += 1
-    return count, data, box, w, h , id, order_index
+        if count_web_1 > int(order_data_count[order_index_web_1]):
+            order_index_web_1+= 1
+            
+def count_obj_web_2(data, box, w, h, id):
+    global count_web_2, data_web_2, order_data, order_index_web_2
+    center_coordinates = (
+        int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
+    if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
+        # count += 1
+        count_web_2 += 1
+        data.append(id)
+        order_data_count = order_data['Count']
+
+        if count_web_2 > int(order_data_count[order_index_web_2]):
+            order_index_web_2+= 1
+   
 
 if __name__ == "__main__":
     opt = parse_opt()
