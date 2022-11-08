@@ -22,6 +22,9 @@ WEIGHTS = ROOT / 'weights'
 count_web_1 = 0
 order_index_web_1 = 0
 data_web_1 = []
+# count = 0
+# order_index= 0
+# data = []
 
 
 def read_order(path, time):
@@ -173,164 +176,164 @@ def run(
         # Process detections
         for i, det in enumerate(pred):  # detections per image
             
-            print('Process detected', i) # Data From Webcam
-            
-            seen += 1
-            if webcam:  # nr_sources >= 1
-                p, im0, _ = path[i], im0s[i].copy(), dataset.count
-                p = Path(p)  # to Path
-                s += f'{i}: '
-                txt_file_name = p.name
-                save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
+            print(f'{seen:#^40}')
+            if i == 0 :
+                seen += 1 
+                print(f'Process detected : {i:#^60}') # Data From Webcam
                 
-            else:
-                p, im0, _ = path, im0s.copy(), getattr(dataset, 'frame', 0)
-                p = Path(p)  # to Path
-                # video file
-                if source.endswith(VID_FORMATS):
-                    txt_file_name = p.stem
+                if webcam:  # nr_sources >= 1
+                    p, im0, _ = path[i], im0s[i].copy(), dataset.count
+                    p = Path(p)  # to Path
+                    s += f'{i}: '
+                    txt_file_name = p.name
                     save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
-                # folder with imgs
-                else:
-                    txt_file_name = p.parent.name  # get folder name containing current img
-                    save_path = str(save_dir / p.parent.name)  # im.jpg, vid.mp4, ...
-            curr_frames[i] = im0
-
-            txt_path = str(save_dir / 'tracks' / txt_file_name)  # im.txt
-            s += '%gx%g ' % im.shape[2:]  # print string
-            imc = im0.copy() if save_crop else im0  # for save_crop
-
-            annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
-            
-            #### COUNTING ###
-            w, h = im0.shape[1], im0.shape[0]
-            
-            
-            
-            
-            
-            #if cfg.STRONGSORT.ECC:  # camera motion compensation
-            #    strongsort_list[i].tracker.camera_update(prev_frames[i], curr_frames[i])
-
-            if det is not None and len(det):
-                # Rescale boxes from img_size to im0 size
-                det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()  # xyxy
-
-                # Print results
-                for c in det[:, -1].unique():
-                    n = (det[:, -1] == c).sum()  # detections per class
-                    s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
-
-                # pass detections to strongsort
-                t4 = time_sync()
-                outputs[i] = tracker_list[i].update(det.cpu(), im0)
-                t5 = time_sync()
-                dt[3] += t5 - t4
-
-                # draw boxes for visualization
-                if len(outputs[i]) > 0:
-                    for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
-    
-                        bboxes = output[0:4]
-                        id = output[4]
-                        cls = output[5]
-                        
-                        ############### COUNTING ##############
-                        count_obj(bboxes, w, h, id)
-                        
-                        if save_txt:
-                            # to MOT format
-                            bbox_left = output[0]
-                            bbox_top = output[1]
-                            bbox_w = output[2] - output[0]
-                            bbox_h = output[3] - output[1]
-                            # Write MOT compliant results to file
-                            with open(txt_path + '.txt', 'a') as f:
-                                f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
-                                                               bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-
-                        if save_vid or save_crop or show_vid:  # Add bbox to image
-                            c = int(cls)  # integer class
-                            id = int(id)  # integer id
-                            label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
-                                (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
-                            annotator.box_label(bboxes, label, color=colors(c, True))
-                            if save_crop:
-                                txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
-                                save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
-
-                LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
-
-            else:
-                #strongsort_list[i].increment_ages()
-                LOGGER.info('No detections')
-
-            # Stream results
-            im0 = annotator.result()  # -------------------- Source Webcam
-
-            
-            ################################## Create output image #################################
-            global count
-            from PIL import Image
-            from PIL import ImageFont
-            from PIL import ImageDraw
-            
-            ## Background ##
-            imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
-            
-            ## LINE ##
-            color = (0, 255, 0)
-            start_point = (int(w/2), 0)
-            end_point = (int(w/2), h)
-            cv2.line(im0, start_point, end_point, color, thickness=2)
-            
-            ## NUMPY ##
-            background = Image.fromarray(imb)
-            draw = ImageDraw.Draw(background)
-            
-            ## TEXT ##
-            thickness = 3
-            org = (200, 200)
-            order_count_text = f"옵션 : {order_data['Option'][order_index]}"
-            order_org = (200, 400)
-            alpha = 0.6
-            
-            font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-            
-                        
-            draw.text(org, f'개수 : {str(count)}',
-                        font=font, fill=(0, 255, 0))  # -- 개수 text
-            draw.text(order_org, order_count_text, font=font,
-                        fill=(0, 255, 0))  # -- 내            
-            
-
-            background_with_text = np.array(background)  # ------- to numpy            
-            
-            
-            if show_vid and i == 0:
-                add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-                # print(i)
-                
-                import screeninfo
-                screen_id = 1
-                screen = screeninfo.get_monitors()[screen_id]               
-                screen_width, screen_height = screen.width, screen.height
-                
-                add_image = cv2.resize(add_image, (screen_width, screen_height))
-                
-                add_image[0,0] = 0
-                add_image[screen_height-2, 0] = 0
-                add_image[0, screen_width-2] = 0
-                add_image[screen_height-2, screen_width-2] = 0
-                window_name = '0'
-                cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-                cv2.moveWindow(window_name, screen.x -1, screen.y-1)
-                cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
                     
-                cv2.imshow(window_name, add_image)
-                cv2.waitKey(1)  # 1 millisecond                
+                else:
+                    p, im0, _ = path, im0s.copy(), getattr(dataset, 'frame', 0)
+                    p = Path(p)  # to Path
+                    # video file
+                    if source.endswith(VID_FORMATS):
+                        txt_file_name = p.stem
+                        save_path = str(save_dir / p.name)  # im.jpg, vid.mp4, ...
+                    # folder with imgs
+                    else:
+                        txt_file_name = p.parent.name  # get folder name containing current img
+                        save_path = str(save_dir / p.parent.name)  # im.jpg, vid.mp4, ...
+                curr_frames[i] = im0
+
+                txt_path = str(save_dir / 'tracks' / txt_file_name)  # im.txt
+                s += '%gx%g ' % im.shape[2:]  # print string
+                imc = im0.copy() if save_crop else im0  # for save_crop
+
+                annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
                 
-            elif show_vid and i == 1:
+                #### COUNTING ###
+                w, h = im0.shape[1], im0.shape[0]
+
+
+                if det is not None and len(det):
+                    # Rescale boxes from img_size to im0 size
+                    det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()  # xyxy
+
+                    # Print results
+                    for c in det[:, -1].unique():
+                        n = (det[:, -1] == c).sum()  # detections per class
+                        s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+
+                    # pass detections to strongsort
+                    t4 = time_sync()
+                    outputs[i] = tracker_list[i].update(det.cpu(), im0)
+                    t5 = time_sync()
+                    dt[3] += t5 - t4
+
+                    # draw boxes for visualization
+                    if len(outputs[i]) > 0:
+                        for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
+        
+                            bboxes = output[0:4]
+                            id = output[4]
+                            cls = output[5]
+                            
+                            ############## COUNTING ##############
+                            count_obj(count_web_1, bboxes, w, h, id)
+                            
+                            if save_txt:
+                                # to MOT format
+                                bbox_left = output[0]
+                                bbox_top = output[1]
+                                bbox_w = output[2] - output[0]
+                                bbox_h = output[3] - output[1]
+                                # Write MOT compliant results to file
+                                with open(txt_path + '.txt', 'a') as f:
+                                    f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
+                                                                bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
+
+                            if save_vid or save_crop or show_vid:  # Add bbox to image
+                                c = int(cls)  # integer class
+                                id = int(id)  # integer id
+                                label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
+                                    (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
+                                annotator.box_label(bboxes, label, color=colors(c, True))
+                                if save_crop:
+                                    txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
+                                    save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
+
+                    LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
+
+                else:
+                    #strongsort_list[i].increment_ages()
+                    LOGGER.info('No detections')
+
+                # Stream results
+                im0 = annotator.result()  # -------------------- Source Webcam
+
+                
+                ################################## Create output image #################################
+
+                
+                
+                if show_vid:
+                    # global count
+                    from PIL import Image
+                    from PIL import ImageFont
+                    from PIL import ImageDraw
+                    
+                    ## Background ##
+                    imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
+                    
+                    ## LINE ##
+                    color = (0, 255, 0)
+                    start_point = (int(w/2), 0)
+                    end_point = (int(w/2), h)
+                    cv2.line(im0, start_point, end_point, color, thickness=2)
+                    
+                    ## NUMPY ##
+                    background = Image.fromarray(imb)
+                    draw = ImageDraw.Draw(background)
+                    
+                    ## TEXT ##
+                    thickness = 3
+                    org = (200, 200)
+                    # order_count_text = f"옵션 : {order_data['Option'][order_index]}"
+                    order_count_text = f"옵션 : {order_data['Option'][order_index_web_1]}"
+                    order_org = (200, 400)
+                    alpha = 0.6
+                    
+                    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                    
+                                
+                    # draw.text(org, f'개수 : {str(count)}',
+                    #             font=font, fill=(0, 255, 0))  # -- 개수 text
+                    draw.text(org, f'개수 : {str(count_web_1)}',
+                                font=font, fill=(0, 255, 0))  # -- 개수 text
+                    draw.text(order_org, order_count_text, font=font,
+                                fill=(0, 255, 0))  # -- 내            
+                    
+
+                    background_with_text = np.array(background)  # ------- to numpy            
+                    add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
+                    # print(i)
+                    
+                    import screeninfo
+                    screen_id = 1
+                    screen = screeninfo.get_monitors()[screen_id]               
+                    screen_width, screen_height = screen.width, screen.height
+                    
+                    add_image = cv2.resize(add_image, (screen_width, screen_height))
+                    
+                    add_image[0,0] = 0
+                    add_image[screen_height-2, 0] = 0
+                    add_image[0, screen_width-2] = 0
+                    add_image[screen_height-2, screen_width-2] = 0
+                    window_name = '0'
+                    cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+                    cv2.moveWindow(window_name, screen.x -1, screen.y-1)
+                    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                        
+                    cv2.imshow(window_name, add_image)
+                    cv2.waitKey(1)  # 1 millisecond                               
+            elif i == 1:
+                seen+=1
                 # print(1)
                 window_name = '1'
                 add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
@@ -409,8 +412,8 @@ def main(opt):
     run(**vars(opt))
     
 # COUNITNG #
-def count_obj(box, w, h, id):
-    global count, data, order_data, order_index
+def count_obj(count, box, w, h, id):
+    # global count, data, order_data, order_index
 
     center_coordinates = (
         int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
