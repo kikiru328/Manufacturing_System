@@ -403,7 +403,7 @@ def screen_show(show_vid, i, add_image):
 
 
 def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count, data, order_index, i):
-# def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count, data, order_index, i):
+
     print(f'Process detected : {i}')
     if webcam:  # nr_sources >= 1
         p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -536,7 +536,8 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
     order_org = (200, 400)
     alpha = 0.6
 
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+    # font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+    font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
 
     draw.text(org, f'개수 : {str(count)}',
                 font=font, fill=(0, 255, 0))  # -- 개수 text
