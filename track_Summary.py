@@ -467,8 +467,8 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
                     # global count_web_1, data_web_1, order_data, order_index_web_1
                 # global count, data, order_index
                 
-                center_coordinates = (
-                    int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
+                center_coordinates = (int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
+                
                 if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data):
                     # count += 1
                     count  += 1
