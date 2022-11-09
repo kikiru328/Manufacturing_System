@@ -19,13 +19,7 @@ ROOT = FILE.parents[0]  # yolov5 strongsort root directory
 WEIGHTS = ROOT / 'weights'
 
 ################ Counting Datas ######################
-count_web_1 = 0
-order_index_web_1 = 0
-data_web_1 = []
 
-count_web_2 = 0
-order_index_web_2 = 0
-data_web_2 = []
 # count = 0
 # order_index= 0
 # data = []
@@ -178,7 +172,13 @@ def run(
         dt[2] += time_sync() - t3
 
         # Process detections
+        count_web_1 = 0
+        order_index_web_1 = 0
+        data_web_1 = []
 
+        count_web_2 = 0
+        order_index_web_2 = 0
+        data_web_2 = []
         for i, det in enumerate(pred):  # detections per image
             seen += 1 
             print(f'{seen:#^40}')
