@@ -208,9 +208,10 @@ def run(
                     tracking_method = tracking_method,
                     ### COUNTING ###
                     order_data = order_data,
-                    count = count_web_1,
-                    data = data_web_1,
-                    order_index = order_index_web_1,
+                    # count = count_web_1,
+                    # data = data_web_1,
+                    # order_index = order_index_web_1,
+                    count_function=count_obj_web_1,
                     i = i
                 )
                
@@ -244,9 +245,10 @@ def run(
                     tracking_method = tracking_method,
                     ### COUNTING ###
                     order_data = order_data,
-                    count = count_web_2,
-                    data = data_web_2,
-                    order_index = order_index_web_2,
+                    # count = count_web_2,
+                    # data = data_web_2,
+                    # order_index = order_index_web_2,
+                    count_function=count_obj_web_2,
                     i = i
                 )
 
@@ -312,8 +314,6 @@ def parse_opt():
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     parser.add_argument('--eval', action='store_true', help='run evaluation')
-
-    
     
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
@@ -329,31 +329,42 @@ def main(opt):
     
     
 # COUNITNG #
-# def count_obj_web_1(data, box, w, h, id):
-#     global count_web_1, data_web_1, order_data, order_index_web_1
-#     center_coordinates = (
-#         int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-#     if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
-#         # count += 1
-#         count_web_1 += 1
-#         data.append(id)
-#         order_data_count = order_data['Count']
+def count_obj_web_1(data, box, w, h, id):
+    global count_web_1, data_web_1, order_data, order_index_web_1
+    center_coordinates = (
+        int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
+    if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
+        # count += 1
+        count_web_1 += 1
+        data.append(id)
+        order_data_count = order_data['Count']
 
-#         if count_web_1 > int(order_data_count[order_index_web_1]):
-#             order_index_web_1+= 1
+        if count_web_1 > int(order_data_count[order_index_web_1]):
+            order_index_web_1+= 1
             
-# def count_obj_web_2(data, box, w, h, id):
-#     global count_web_2, data_web_2, order_data, order_index_web_2
-#     center_coordinates = (
-#         int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-#     if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
-#         # count += 1
-#         count_web_2 += 1
-#         data.append(id)
-#         order_data_count = order_data['Count']
+    global count, order_index            
+    count = count_web_1
+    order_index = order_index_web_1,
+    # return count, order_index
+            
+def count_obj_web_2(data, box, w, h, id):
+    global count_web_2, data_web_2, order_data, order_index_web_2
+    center_coordinates = (
+        int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
+    if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
+        # count += 1
+        count_web_2 += 1
+        data.append(id)
+        order_data_count = order_data['Count']
 
-#         if count_web_2 > int(order_data_count[order_index_web_2]):
-#             order_index_web_2+= 1
+        if count_web_2 > int(order_data_count[order_index_web_2]):
+            order_index_web_2+= 1
+            
+    global count, order_index            
+    count = count_web_2
+    order_index = order_index_web_2,
+    # return count, order_index        
+            
    
 def screen_show(show_vid, i, add_image):
     if show_vid:
@@ -378,7 +389,9 @@ def screen_show(show_vid, i, add_image):
 
 
 
-def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count, data, order_index, i):
+# def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count, data, order_index, i):
+
+def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count_function, i):
 
     print(f'Process detected : {i}')
     if webcam:  # nr_sources >= 1
@@ -410,7 +423,6 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
     #### COUNTING ###
     w, h = im0.shape[1], im0.shape[0]
 
-
     if det is not None and len(det):
         # Rescale boxes from img_size to im0 size
         det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()  # xyxy
@@ -432,27 +444,9 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
 
                 bboxes = output[0:4]
                 id = output[4]
-                cls = output[5]
-                
-                ############## COUNTING ##############
-                # count_obj_web_1(data_web_1, bboxes, w, h, id)
-                
-                
-                
-                # def count_obj_web_1(data, box, w, h, id):
-                    # global count_web_1, data_web_1, order_data, order_index_web_1
-                # global count, data, order_index
-                
-                center_coordinates = (int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
-                
-                if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data):
-                    # count += 1
-                    count  += 1
-                    data.append(id)
-                    order_data_count = order_data['Count']
-
-                    if count > int(order_data_count[order_index]):
-                        order_index+= 1
+                cls = output[5] 
+                               
+                count_function()
                 
                 if save_txt:
                     # to MOT format
@@ -486,6 +480,7 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
 
 
     ################################## Create output image #################################
+    
     print(f'Count_web_{i} : {count}')
     from PIL import Image
     from PIL import ImageFont
