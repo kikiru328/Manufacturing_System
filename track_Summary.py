@@ -95,12 +95,6 @@ def run(
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
         eval=False,  # run multi-gpu eval,       
-        count_web_1 = 0,
-        count_web_2 = 0,
-        order_index_web_1 = 0,
-        order_index_web_2 = 0,
-        data_web_1 = [],
-        data_web_2 = []
 ):
 
     source = str(source)
@@ -131,20 +125,7 @@ def run(
     stride, names, pt = model.stride, model.names, model.pt
     imgsz = check_img_size(imgsz, s=stride)  # check image size
 
-    if count_web_1:
-        count_web_1 = 0
-    elif count_web_2:
-        count_web_2 = 0
-    
-    if order_index_web_1:
-        order_index_web_1 = 0,
-    elif order_index_web_2:
-        order_index_web_2 = 0 
-    
-    if data_web_1:
-        data_web_1 = []
-    elif data_web_2:
-        data_web_2 = []
+
         
     # Dataloader
     if webcam:
@@ -271,6 +252,7 @@ def run(
 
             # Save results (image with detections)
             if save_vid:
+                # global im0
                 if vid_path[i] != save_path:  # new video
                     vid_path[i] = save_path
                     if isinstance(vid_writer[i], cv2.VideoWriter):
@@ -330,13 +312,7 @@ def parse_opt():
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     parser.add_argument('--eval', action='store_true', help='run evaluation')
-    
-    parser.add_argument('--count_web_1', default=0, type=int)
-    parser.add_argument('--count_web_2', default=1, type=int)
-    parser.add_argument('--order_index_web_1', default=0, type=int)
-    parser.add_argument('--order_index_web_2', default=0, type=int)
-    parser.add_argument('--data_web_1', default=[], type=list)
-    parser.add_argument('--data_web_2', default=[], type=list)
+
     
     
     opt = parser.parse_args()
@@ -536,8 +512,8 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
     order_org = (200, 400)
     alpha = 0.6
 
-    # font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-    font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
+    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+    # font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
 
     draw.text(org, f'개수 : {str(count)}',
                 font=font, fill=(0, 255, 0))  # -- 개수 text
