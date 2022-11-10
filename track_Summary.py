@@ -179,78 +179,10 @@ def run(
             seen += 1 
             print(f'{seen:#^40}')   
             if i == 0:
-                webcam_function(
-                    webcam = webcam, 
-                    path = path, 
-                    im = im, 
-                    im0s = im0s, 
-                    dataset = dataset, 
-                    s = s, 
-                    save_dir = save_dir,
-                    source = source, 
-                    curr_frames = curr_frames, 
-                    line_thickness = line_thickness, 
-                    det = det, 
-                    names = names, 
-                    outputs = outputs, 
-                    tracker_list = tracker_list, 
-                    save_crop = save_crop, 
-                    save_txt = save_txt, 
-                    frame_idx = frame_idx, 
-                    save_vid = save_vid, 
-                    show_vid = show_vid, 
-                    hide_labels = hide_labels, 
-                    hide_class = hide_class,
-                    hide_conf = hide_conf, 
-                    dt = dt, 
-                    t3 = t3, 
-                    t2 = t2, 
-                    tracking_method = tracking_method,
-                    ### COUNTING ###
-                    order_data = order_data,
-                    # count = count_web_1,
-                    # data = data_web_1,
-                    # order_index = order_index_web_1,
-                    count_function=count_obj_web_1,
-                    i = i
-                )
+                im0 = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
                
             elif i == 1:
-                webcam_function(
-                    webcam = webcam, 
-                    path = path, 
-                    im = im, 
-                    im0s = im0s, 
-                    dataset = dataset, 
-                    s = s, 
-                    save_dir = save_dir,
-                    source = source, 
-                    curr_frames = curr_frames, 
-                    line_thickness = line_thickness, 
-                    det = det, 
-                    names = names, 
-                    outputs = outputs, 
-                    tracker_list = tracker_list, 
-                    save_crop = save_crop, 
-                    save_txt = save_txt, 
-                    frame_idx = frame_idx, 
-                    save_vid = save_vid, 
-                    show_vid = show_vid, 
-                    hide_labels = hide_labels, 
-                    hide_class = hide_class,
-                    hide_conf = hide_conf, 
-                    dt = dt, 
-                    t3 = t3, 
-                    t2 = t2, 
-                    tracking_method = tracking_method,
-                    ### COUNTING ###
-                    order_data = order_data,
-                    # count = count_web_2,
-                    # data = data_web_2,
-                    # order_index = order_index_web_2,
-                    count_function=count_obj_web_2,
-                    i = i
-                )
+                im0 = webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
 
             # Save results (image with detections)
             if save_vid:
@@ -325,74 +257,8 @@ def main(opt):
     check_requirements(requirements=ROOT / 'requirements.txt', exclude=('tensorboard', 'thop'))
     run(**vars(opt))
     
-    
-    
-    
-# COUNITNG #
-def count_obj_web_1(data, box, w, h, id):
-    global count_web_1, data_web_1, order_data, order_index_web_1
-    center_coordinates = (
-        int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-    if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
-        # count += 1
-        count_web_1 += 1
-        data.append(id)
-        order_data_count = order_data['Count']
 
-        if count_web_1 > int(order_data_count[order_index_web_1]):
-            order_index_web_1+= 1
-            
-    global count, order_index            
-    count = count_web_1
-    order_index = order_index_web_1,
-    # return count, order_index
-            
-def count_obj_web_2(data, box, w, h, id):
-    global count_web_2, data_web_2, order_data, order_index_web_2
-    center_coordinates = (
-        int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-    if (int(box[0]+(box[2] - box[0])/2) < (int(w/2))) and (id not in data):
-        # count += 1
-        count_web_2 += 1
-        data.append(id)
-        order_data_count = order_data['Count']
-
-        if count_web_2 > int(order_data_count[order_index_web_2]):
-            order_index_web_2+= 1
-            
-    global count, order_index            
-    count = count_web_2
-    order_index = order_index_web_2,
-    # return count, order_index        
-            
-   
-def screen_show(show_vid, i, add_image):
-    if show_vid:
-        import screeninfo
-        screen_id = i
-        screen = screeninfo.get_monitors()[screen_id]               
-        screen_width, screen_height = screen.width, screen.height
-        
-        add_image = cv2.resize(add_image, (screen_width, screen_height))
-        
-        add_image[0,0] = 0
-        add_image[screen_height-2, 0] = 0
-        add_image[0, screen_width-2] = 0
-        add_image[screen_height-2, screen_width-2] = 0
-        window_name = str(i)
-        cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-        cv2.moveWindow(window_name, screen.x -1, screen.y-1)
-        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-            
-        cv2.imshow(window_name, add_image)
-        cv2.waitKey(1)
-
-
-
-# def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count, data, order_index, i):
-
-def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,det,names, outputs,tracker_list, save_crop, save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_class, hide_conf, dt, t3, t2, tracking_method, order_data, count_function, i):
-
+def webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i):
     print(f'Process detected : {i}')
     if webcam:  # nr_sources >= 1
         p, im0, _ = path[i], im0s[i].copy(), dataset.count
@@ -418,110 +284,186 @@ def webcam_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_fra
     s += '%gx%g ' % im.shape[2:]  # print string
     imc = im0.copy() if save_crop else im0  # for save_crop
 
-    annotator = Annotator(im0, line_width=line_thickness, pil=not ascii)
+    annotator = Annotator(im0, line_width=line_thickness, pil=not ascii) 
+    return p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator
 
-    #### COUNTING ###
-    w, h = im0.shape[1], im0.shape[0]
+def common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls,
+                          hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p):
+    if save_txt:
+        # to MOT format
+        bbox_left = output[0]
+        bbox_top = output[1]
+        bbox_w = output[2] - output[0]
+        bbox_h = output[3] - output[1]
+        # Write MOT compliant results to file
+        with open(txt_path + '.txt', 'a') as f:
+            f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
+                                        bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
 
-    if det is not None and len(det):
-        # Rescale boxes from img_size to im0 size
-        det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()  # xyxy
-
-        # Print results
-        for c in det[:, -1].unique():
-            n = (det[:, -1] == c).sum()  # detections per class
-            s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
-
-        # pass detections to strongsort
-        t4 = time_sync()
-        outputs[i] = tracker_list[i].update(det.cpu(), im0)
-        t5 = time_sync()
-        dt[3] += t5 - t4
-
-        # draw boxes for visualization
-        if len(outputs[i]) > 0:
-            for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
-
-                bboxes = output[0:4]
-                id = output[4]
-                cls = output[5] 
-                               
-                count_function()
-                
-                if save_txt:
-                    # to MOT format
-                    bbox_left = output[0]
-                    bbox_top = output[1]
-                    bbox_w = output[2] - output[0]
-                    bbox_h = output[3] - output[1]
-                    # Write MOT compliant results to file
-                    with open(txt_path + '.txt', 'a') as f:
-                        f.write(('%g ' * 10 + '\n') % (frame_idx + 1, id, bbox_left,  # MOT format
-                                                    bbox_top, bbox_w, bbox_h, -1, -1, -1, i))
-
-                if save_vid or save_crop or show_vid:  # Add bbox to image
-                    c = int(cls)  # integer class
-                    id = int(id)  # integer id
-                    label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
-                        (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
-                    annotator.box_label(bboxes, label, color=colors(c, True))
-                    if save_crop:
-                        txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
-                        save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
-
-        LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
-
-    else:
-        #strongsort_list[i].increment_ages()
-        LOGGER.info('No detections')
-
-    # Stream results
-    im0 = annotator.result()  # -------------------- Source Webcam
-
-
-    ################################## Create output image #################################
+    if save_vid or save_crop or show_vid:  # Add bbox to image
+        c = int(cls)  # integer class
+        id = int(id)  # integer id
+        label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
+            (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
+        annotator.box_label(bboxes, label, color=colors(c, True))
+        if save_crop:
+            txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
+            save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
     
-    print(f'Count_web_{i} : {count}')
+       #%^%^%^%^%
+class Count:
+    def count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
+        w, h = im0.shape[1], im0.shape[0]
+        if det is not None and len(det):
+            det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()  # detections per class
+                s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
+            t4 = time_sync()
+            outputs[i] = tracker_list[i].update(det.cpu(), im0)
+            t5 = time_sync()
+            dt[3] += t5 - t4
+            if len(outputs[i]) > 0:
+                for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
+                    bboxes = output[0:4]
+                    id = output[4]
+                    cls = output[5]
+                    global count_web_1, data_web_1, order_data, order_index_web_1
+                    center_coordinates = (
+                        int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
+                    
+                    if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data_web_1):
+                        # count += 1
+                        count_web_1 += 1
+                        data_web_1.append(id)
+                        order_data_count = order_data['Count']
+
+                        if count_web_1 > int(order_data_count[order_index_web_1]):
+                            order_index_web_1+= 1
+                            
+                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
+                                        show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
+                    
+            LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
+        else:
+            #strongsort_list[i].increment_ages()
+            LOGGER.info('No detections')    
+        im0 = annotator.result()
+        return im0, count_web_1, order_index_web_1
+    
+    
+    def count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
+        w, h = im0.shape[1], im0.shape[0]
+        if det is not None and len(det):
+            det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()  # detections per class
+                s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
+            t4 = time_sync()
+            outputs[i] = tracker_list[i].update(det.cpu(), im0)
+            t5 = time_sync()
+            dt[3] += t5 - t4
+            if len(outputs[i]) > 0:
+                for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
+                    bboxes = output[0:4]
+                    id = output[4]
+                    cls = output[5]
+                    global count_web_2, data_web_2, order_data, order_index_web_2
+                    center_coordinates = (
+                        int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
+                    
+                    if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data_web_2):
+                        # count += 1
+                        count_web_2 += 1
+                        data_web_2.append(id)
+                        order_data_count = order_data['Count']
+
+                        if count_web_2 > int(order_data_count[order_index_web_2]):
+                            order_index_web_2+= 1
+                            
+                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
+                                        show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
+                    
+            LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
+        else:
+            #strongsort_list[i].increment_ages()
+            LOGGER.info('No detections')    
+        im0 = annotator.result()
+        return im0, count_web_2, order_index_web_2    
+            
+          
+
+def draw_function(im0, count, order_index):
+    w, h = im0.shape[1], im0.shape[0]
     from PIL import Image
     from PIL import ImageFont
     from PIL import ImageDraw
-
-    ## Background ##
-    imb = np.zeros(im0.shape, np.uint8)  # ---------- Make Backgorund
-
-    ## LINE ##
-    color = (0, 255, 0)
+    imb = np.zeros(im0.shape, np.uint8)
+    color = (0,255,0)
     start_point = (int(w/2), 0)
     end_point = (int(w/2), h)
     cv2.line(im0, start_point, end_point, color, thickness=2)
-
-    ## NUMPY ##
     background = Image.fromarray(imb)
     draw = ImageDraw.Draw(background)
-
-    ## TEXT ##
-    thickness = 3
-    org = (200, 200)
-
-    order_count_text = f"옵션 : {order_data['Option'][order_index]}"
-    order_org = (200, 400)
+    org = (200,200)
+    order_count_text = (f"옵션 : {order_data['Option'][order_index]}")
+    order_org = (200,400)
     alpha = 0.6
-
     font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-    # font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
-
-    draw.text(org, f'개수 : {str(count)}',
-                font=font, fill=(0, 255, 0))  # -- 개수 text
-    draw.text(order_org, order_count_text, font=font,
-                fill=(0, 255, 0))  # -- 내            
-
-
-    background_with_text = np.array(background)  # ------- to numpy            
+    draw.text(org, f'개수 : {str(count)}', font = font, fill = (0, 255, 0))
+    draw.text(order_org, order_count_text, font=font, fill=(0, 255, 0))
+    background_with_text = np.array(background)
     add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-
-
-    screen_show(show_vid, i, add_image)
+    return add_image
+    
+def screen_show(show_vid, i, add_image):
+    if show_vid:
+        import screeninfo
+        screen_id = i
+        screen = screeninfo.get_monitors()[screen_id]               
+        screen_width, screen_height = screen.width, screen.height
         
+        add_image = cv2.resize(add_image, (screen_width, screen_height))
+        
+        add_image[0,0] = 0
+        add_image[screen_height-2, 0] = 0
+        add_image[0, screen_width-2] = 0
+        add_image[screen_height-2, screen_width-2] = 0
+        window_name = str(i)
+        cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+        cv2.moveWindow(window_name, screen.x -1, screen.y-1)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            
+        cv2.imshow(window_name, add_image)
+        cv2.waitKey(1)
+
+
+def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class):
+    
+    p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
+    
+    im0, count_web_1, order_index_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+    
+    add_image = draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1)
+    
+    screen_show(show_vid, i, add_image)
+    
+    return im0    
+
+def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class):
+    
+    p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
+    
+    im0, count_web_2, order_index_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+    
+    add_image = draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2)
+    
+    screen_show(show_vid, i, add_image)
+    
+    return im0  
+
+
+
 
 if __name__ == "__main__":
     opt = parse_opt()
