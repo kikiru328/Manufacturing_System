@@ -32,7 +32,7 @@ def read_order(path, time):
     return order_data
 
 
-order_path = './2022-08-11-제조물량_요청사항표 (수정본).xlsx'
+order_path = './2022-08-11-제조물량_요청사항표 (수정본) copy.xlsx'
 order_time = '요청사항표-새벽배송'
 
 order_data = read_order(order_path, order_time)
@@ -338,7 +338,7 @@ class Count:
                         order_data_count = order_data['Count']
                         step_count_web_1 += 1
                         
-                        if count_web_1 >= int(order_data_count[order_index_web_1]):
+                        if step_count_web_1 >= int(order_data_count[order_index_web_1]):
                             order_index_web_1+= 1
                             step_count_web_1 = 0 
                             
@@ -379,7 +379,7 @@ class Count:
                         data_web_2.append(id)
                         order_data_count = order_data['Count']
                         step_count_web_2 += 1 
-                        if count_web_2 >= int(order_data_count[order_index_web_2]):
+                        if step_count_web_2 >= int(order_data_count[order_index_web_2]):
                             order_index_web_2+= 1
                             step_count_web_2 = 0
                             
@@ -407,13 +407,20 @@ def draw_function(im0, count, order_index, step_count):
     cv2.line(im0, start_point, end_point, color, thickness=2)
     background = Image.fromarray(imb)
     draw = ImageDraw.Draw(background)
-    org = (200,200)
-    order_count_text = (f"현재 옵션 : {order_data['Option'][order_index]} > ( {step_count} / {order_data['Count'][order_index]})")
-    order_org = (200,400)
-    alpha = 0.6
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
-    draw.text(org, f'개수 : {str(count)}', font = font, fill = (0, 255, 0))
-    draw.text(order_org, order_count_text, font=font, fill=(0, 255, 0))
+    total_count_text_org = (200,200)
+    total_count_text = f"총 진행 개수 : {str(count)}"
+    order_count_text_org = (200,300)
+    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}\n({step_count} / {order_data['Count'][order_index]})"
+    try:
+        next_option_text_org = (200,400)
+        next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"
+    except:
+        next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
+    alpha = 0.3
+    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 11)
+    draw.text(total_count_text_org, total_count_text, font = font, fill = (0, 255, 0))
+    draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 0))
+    draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,0))
     background_with_text = np.array(background)
     add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
     return add_image
