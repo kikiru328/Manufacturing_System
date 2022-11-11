@@ -18,10 +18,9 @@ FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # yolov5 strongsort root directory
 WEIGHTS = ROOT / 'weights'
 
-# ################ Counting Datas ######################
 
-count_web_1, order_index_web_1, data_web_1 = 0, 0, []
-count_web_2, order_index_web_2, data_web_2 = 0, 0, []
+count_web_1, order_index_web_1, step_count_web_1, data_web_1 = 0, 0, 0, []
+count_web_2, order_index_web_2, step_count_web_2, data_web_2 = 0, 0, 0, []
 
 
 
@@ -328,7 +327,7 @@ class Count:
                     bboxes = output[0:4]
                     id = output[4]
                     cls = output[5]
-                    global count_web_1, data_web_1, order_data, order_index_web_1
+                    global count_web_1, data_web_1, order_data, order_index_web_1, step_count_web_1
                     center_coordinates = (
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
@@ -337,9 +336,11 @@ class Count:
                         count_web_1 += 1
                         data_web_1.append(id)
                         order_data_count = order_data['Count']
-
-                        if count_web_1 > int(order_data_count[order_index_web_1]):
+                        step_count_web_1 += 1
+                        
+                        if count_web_1 >= int(order_data_count[order_index_web_1]):
                             order_index_web_1+= 1
+                            step_count_web_1 = 0 
                             
                     common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
                                         show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
@@ -349,7 +350,7 @@ class Count:
             #strongsort_list[i].increment_ages()
             LOGGER.info('No detections')    
         im0 = annotator.result()
-        return im0, count_web_1, order_index_web_1
+        return im0, count_web_1, order_index_web_1, step_count_web_1
     
     
     def count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
@@ -368,7 +369,7 @@ class Count:
                     bboxes = output[0:4]
                     id = output[4]
                     cls = output[5]
-                    global count_web_2, data_web_2, order_data, order_index_web_2
+                    global count_web_2, data_web_2, order_data, order_index_web_2, step_count_web_2
                     center_coordinates = (
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
@@ -377,9 +378,10 @@ class Count:
                         count_web_2 += 1
                         data_web_2.append(id)
                         order_data_count = order_data['Count']
-
-                        if count_web_2 > int(order_data_count[order_index_web_2]):
+                        step_count_web_2 += 1 
+                        if count_web_2 >= int(order_data_count[order_index_web_2]):
                             order_index_web_2+= 1
+                            step_count_web_2 = 0
                             
                     common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
                                         show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
@@ -389,11 +391,11 @@ class Count:
             #strongsort_list[i].increment_ages()
             LOGGER.info('No detections')    
         im0 = annotator.result()
-        return im0, count_web_2, order_index_web_2    
+        return im0, count_web_2, order_index_web_2, step_count_web_2
             
           
 
-def draw_function(im0, count, order_index):
+def draw_function(im0, count, order_index, step_count):
     w, h = im0.shape[1], im0.shape[0]
     from PIL import Image
     from PIL import ImageFont
@@ -406,7 +408,7 @@ def draw_function(im0, count, order_index):
     background = Image.fromarray(imb)
     draw = ImageDraw.Draw(background)
     org = (200,200)
-    order_count_text = (f"옵션 : {order_data['Option'][order_index]}")
+    order_count_text = (f"현재 옵션 : {order_data['Option'][order_index]} > ( {step_count} / {order_data['Count'][order_index]})")
     order_org = (200,400)
     alpha = 0.6
     font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
@@ -442,9 +444,9 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
     
     p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
     
-    im0, count_web_1, order_index_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+    im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
     
-    add_image = draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1)
+    add_image = draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
     
     screen_show(show_vid, i, add_image)
     
@@ -454,9 +456,9 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
     
     p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
     
-    im0, count_web_2, order_index_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+    im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
     
-    add_image = draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2)
+    add_image = draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
     
     screen_show(show_vid, i, add_image)
     
