@@ -411,7 +411,10 @@ def draw_text(img, org, text, color, font_size):
     import numpy as np
     text_ = Image.fromarray(img)
     draw = ImageDraw.Draw(text_)
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
+    except:
+        font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
     draw.text(org, text, font = font, color = color)
     return np.array(text_)
      
@@ -438,7 +441,10 @@ def basic_draw_function(im0, count, order_index, step_count):
     except:
         next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
     alpha = 0.3
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 11)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 11)
+    except:
+        font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 11)
     draw.text(total_count_text_org, total_count_text, font = font, fill = (0, 255, 0))
     draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 0))
     draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,0))
@@ -525,7 +531,10 @@ def toping_draw_function(im0, count, order_index, step_count):
         next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
     except:
         next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    except:
+        font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 20)
     draw.text(total_count_text_org, total_count_text, font = font, fill = (0,255, 255))
     draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 255))
     draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,255))
@@ -542,7 +551,11 @@ def finish_img(im0):
     from PIL import ImageDraw
     text_ = Image.fromarray(finish_blank)
     draw = ImageDraw.Draw(text_)
-    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    except:
+        font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 20)
+        
     draw.text((int(w/3), int(h/2)), "제조가 종료되었습니다.\n고생하셨습니다.", font=font, fill=(255,255,255))
     add_image = np.array(text_)
     return add_image
@@ -578,8 +591,7 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
-    except Exception as e:
-        print(e)
+    except:
         add_image = finish_img(im0 = im0)
     
     screen_show(show_vid, i, add_image)
@@ -594,8 +606,7 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = basic_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
-    except Exception as e:
-        print(e)
+    except:
         add_image = finish_img(im0 = im0)
         
     screen_show(show_vid, i, add_image)
