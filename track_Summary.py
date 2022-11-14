@@ -392,10 +392,19 @@ class Count:
             LOGGER.info('No detections')    
         im0 = annotator.result()
         return im0, count_web_2, order_index_web_2, step_count_web_2
-            
-          
 
-def draw_function(im0, count, order_index, step_count):
+
+def draw_text(img, org, text, color, font_size):
+    from PIL import Image, ImageFont, ImageDraw
+    import numpy as np
+    text_ = Image.fromarray(img)
+    draw = ImageDraw.Draw(text_)
+    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
+    draw.text(org, text, font = font, fill = color )
+    return np.array(text_)
+     
+
+def basic_draw_function(im0, count, order_index, step_count):
     w, h = im0.shape[1], im0.shape[0]
     from PIL import Image
     from PIL import ImageFont
@@ -423,6 +432,88 @@ def draw_function(im0, count, order_index, step_count):
     draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,0))
     background_with_text = np.array(background)
     add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
+    return add_image
+
+def toping_draw_function(im0, count, order_index, step_count): 
+    w, h = im0.shape[1], im0.shape[0]
+    
+    from PIL import Image
+    from PIL import ImageFont
+    from PIL import ImageDraw
+    
+    # Background
+    imb = np.zeros(im0.shape, np.uint8)
+    
+    # Resize
+    resize_im0 = imb.copy()
+    resizeas = (w, int(h*0.8))
+    im0 = cv2.resize(im0, dsize=resizeas)
+    resize_im0[:int(h*0.8),:,:] = im0
+    
+    # count line
+    color = (255,0,0)
+    start_point = (int(w/2), 0)
+    end_point = (int(w/2), int(h*0.77))
+    cv2.line(resize_im0, start_point, end_point, color, thickness=3)
+    
+    # CHECK BOX
+    option = order_data['Option'][order_index]
+    
+    # BOX
+    g_box = cv2.rectangle
+    overlay = resize_im0.copy()
+    box_alpha = 0.4
+    if '콩x' in option:
+        red_box = cv2.rectangle(overlay, (0,0),(int(w/1.95),int(h*0.8)), (0,0,255), -1)
+        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), red_box, box_alpha, 0)
+    else:
+        green_box = cv2.rectangle(overlay, (0,0),(int(w/1.95),int(h*0.8)), (0,255,0), -1)
+        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), green_box, box_alpha, 0)
+        
+    if '당근x' in option:
+        red_box = cv2.rectangle(overlay, (int(w/2.05),0),(w,int(h*0.8)), (0,0,255), -1)
+        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), red_box, box_alpha, 0)      
+    else:
+        green_box = cv2.rectangle(overlay, (int(w/2.05),0),(w,int(h*0.8)), (0,255,0), -1)
+        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), green_box, box_alpha, 0)          
+        
+        
+    # devide_line
+    sp = (int(w/2),0)
+    ep = (int(w/2),int(h*0.8))
+    cv2.line(final_check, sp, ep, (0,0,0), thickness = 5 )
+    
+    # Draw 
+    # background = Image.fromarray(imb)
+    # draw = ImageDraw.Draw(background)
+    text_ = Image.fromarray(final_check)
+    draw = ImageDraw.Draw(text_)
+    
+
+    
+    # Text
+    total_count_text_org = (int(w*0.45), int(h*0.83))
+    total_count_text = f"총 진행 개수 : {str(count)}"
+    order_count_text_org = (int(w*0.45), int(h*0.88))
+    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]} ({step_count} / {order_data['Count'][order_index]})"
+    try:
+        next_option_text_org = (int(w*0.45), int(h*0.93))
+        next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
+    except:
+        next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
+    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    draw.text(total_count_text_org, total_count_text, font = font, fill = (0,255, 255))
+    draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 255))
+    draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,255))
+    # background_with_text = np.array(background)
+    add_image = np.array(text_)
+    
+    # cv2.line(add_image, (0,int(w/2)), (int(h*0.8),int(w/2)), (0,0,0), 5)
+    
+    
+    # Adding
+    # alpha = 0.5
+    # add_image = cv2.addWeighted(final_check, alpha, background_with_text, (1-alpha), 0)
     return add_image
     
 def screen_show(show_vid, i, add_image):
@@ -453,7 +544,7 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
     
     im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
     
-    add_image = draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
+    add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
     
     screen_show(show_vid, i, add_image)
     
@@ -465,7 +556,7 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
     
     im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
     
-    add_image = draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
+    add_image = basic_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
     
     screen_show(show_vid, i, add_image)
     
