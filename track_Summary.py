@@ -400,7 +400,7 @@ def draw_text(img, org, text, color, font_size):
     text_ = Image.fromarray(img)
     draw = ImageDraw.Draw(text_)
     font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
-    draw.text(org, text, font = font, fill = color )
+    draw.text(org, text, font = font, color = color)
     return np.array(text_)
      
 
@@ -460,24 +460,38 @@ def toping_draw_function(im0, count, order_index, step_count):
     option = order_data['Option'][order_index]
     
     # BOX
-    g_box = cv2.rectangle
     overlay = resize_im0.copy()
-    box_alpha = 0.4
+    box_alpha = 0.7
+    
+    #basic check box
+    if option != str:
+        option = str(option)
+    
     if '콩x' in option:
-        red_box = cv2.rectangle(overlay, (0,0),(int(w/1.95),int(h*0.8)), (0,0,255), -1)
-        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), red_box, box_alpha, 0)
+        box = cv2.rectangle(overlay, (0,0),(int(w/2),int(h*0.8)), (0,0,255), -1)
     else:
-        green_box = cv2.rectangle(overlay, (0,0),(int(w/1.95),int(h*0.8)), (0,255,0), -1)
-        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), green_box, box_alpha, 0)
-        
+        box = cv2.rectangle(overlay, (0,0),(int(w/2),int(h*0.8)), (0,255,0), -1)
+            
     if '당근x' in option:
-        red_box = cv2.rectangle(overlay, (int(w/2.05),0),(w,int(h*0.8)), (0,0,255), -1)
-        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), red_box, box_alpha, 0)      
+        box = cv2.rectangle(overlay, (int(w/2),0),(w,int(h*0.8)), (0,0,255), -1)
     else:
-        green_box = cv2.rectangle(overlay, (int(w/2.05),0),(w,int(h*0.8)), (0,255,0), -1)
-        final_check = cv2.addWeighted(resize_im0, (1-box_alpha), green_box, box_alpha, 0)          
+        box = cv2.rectangle(overlay, (int(w/2),0),(w,int(h*0.8)), (0,255,0), -1)    
         
         
+    final_check = cv2.addWeighted(resize_im0, (1-box_alpha), box, box_alpha, 0)
+    
+    
+    if '콩x' in option:
+        final_check = draw_text(final_check, (int(w/4), int(h*0.4)), "콩 X", (0,0,0), 15)
+    else:
+        final_check = draw_text(final_check, (int(w/4), int(h*0.4)), "콩 O", (0,0,0), 15)
+    
+    if '당근x' in option:
+        final_check = draw_text(final_check, (int(w*0.75), int(h*0.4)), "당근 X", (0,0,0), 15)
+    else:
+        final_check = draw_text(final_check, (int(w*0.75), int(h*0.4)), "당근 O", (0,0,0), 15)
+        
+                
     # devide_line
     sp = (int(w/2),0)
     ep = (int(w/2),int(h*0.8))
@@ -488,8 +502,6 @@ def toping_draw_function(im0, count, order_index, step_count):
     # draw = ImageDraw.Draw(background)
     text_ = Image.fromarray(final_check)
     draw = ImageDraw.Draw(text_)
-    
-
     
     # Text
     total_count_text_org = (int(w*0.45), int(h*0.83))
@@ -505,17 +517,26 @@ def toping_draw_function(im0, count, order_index, step_count):
     draw.text(total_count_text_org, total_count_text, font = font, fill = (0,255, 255))
     draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 255))
     draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,255))
-    # background_with_text = np.array(background)
+
     add_image = np.array(text_)
-    
-    # cv2.line(add_image, (0,int(w/2)), (int(h*0.8),int(w/2)), (0,0,0), 5)
-    
-    
-    # Adding
-    # alpha = 0.5
-    # add_image = cv2.addWeighted(final_check, alpha, background_with_text, (1-alpha), 0)
     return add_image
+
+def finish_img(im0):
+    finish_blank = np.zeros(im0.shape, np.uint8)
+    w, h = finish_blank.shape[1], finish_blank.shape[0]
     
+    from PIL import Image
+    from PIL import ImageFont
+    from PIL import ImageDraw
+    text_ = Image.fromarray(finish_blank)
+    draw = ImageDraw.Draw(text_)
+    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
+    draw.text((int(w/3), int(h/2)), "제조가 종료되었습니다.\n고생하셨습니다.", font=font, fill=(255,255,255))
+    add_image = np.array(text_)
+    return add_image
+
+
+
 def screen_show(show_vid, i, add_image):
     if show_vid:
         import screeninfo
@@ -537,30 +558,36 @@ def screen_show(show_vid, i, add_image):
         cv2.imshow(window_name, add_image)
         cv2.waitKey(1)
 
-
+        
 def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class):
-    
-    p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
-    
-    im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
-    
-    add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
+    try:
+        p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
+        
+        im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+        
+        add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
+    except:
+        add_image = finish_img(im0 = im0)
     
     screen_show(show_vid, i, add_image)
-    
     return im0    
+    
+        
 
 def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class):
-    
-    p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
-    
-    im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
-    
-    add_image = basic_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
-    
+    try:
+        p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
+        
+        im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+        
+        add_image = basic_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
+    except:
+        add_image = finish_img(im0 = im0)
+        
     screen_show(show_vid, i, add_image)
-    
     return im0  
+    
+    
 
 
 
