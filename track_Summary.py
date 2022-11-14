@@ -24,18 +24,7 @@ count_web_2, order_index_web_2, step_count_web_2, data_web_2 = 0, 0, 0, []
 
 
 
-def read_order(path, time):
-    import pandas as pd
-    order_data = pd.read_excel(path, sheet_name=time, header=None)
-    order_data.columns = ['index', 'Name', 'Option', 'Count']
-    order_data = order_data.drop('index', axis=1)
-    return order_data
 
-
-order_path = './2022-08-11-제조물량_요청사항표 (수정본) copy.xlsx'
-order_time = '요청사항표-새벽배송'
-
-order_data = read_order(order_path, order_time)
 
 ######################################################
 if str(ROOT) not in sys.path:
@@ -93,9 +82,30 @@ def run(
         hide_class=False,  # hide IDs
         half=False,  # use FP16 half-precision inference
         dnn=False,  # use OpenCV DNN for ONNX inference
-        eval=False,  # run multi-gpu eval,       
+        eval=False,  # run multi-gpu eval,
+        file_path='',
+        sheet_name=''
 ):
+    
+    def read_order(path, time):
+        import pandas as pd
+        order_data = pd.read_excel(path, sheet_name=time, header=None)
+        order_data.columns = ['index', 'Name', 'Option', 'Count']
+        order_data = order_data.drop('index', axis=1)
+        return order_data
 
+
+    order_file_path = str(file_path)
+    order_sheet_name = str(sheet_name)
+    #     order_file_path = './2022-08-11-제조물량_요청사항표 (수정본) copy.xlsx'
+    
+    # if :
+    #     order_sheet_name = '요청사항표-새벽배송'
+    global order_data
+    order_data = read_order(order_file_path, order_sheet_name)
+    
+    
+    
     source = str(source)
     save_img = not nosave and not source.endswith('.txt')  # save inference images
     is_file = Path(source).suffix[1:] in (VID_FORMATS)
@@ -245,6 +255,8 @@ def parse_opt():
     parser.add_argument('--half', action='store_true', help='use FP16 half-precision inference')
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     parser.add_argument('--eval', action='store_true', help='run evaluation')
+    parser.add_argument('--file-path', type=Path, help='order_data_excel_file_path')
+    parser.add_argument('--sheet-name',type=str, help='order_data_sheet_name')
     
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
@@ -327,7 +339,7 @@ class Count:
                     bboxes = output[0:4]
                     id = output[4]
                     cls = output[5]
-                    global count_web_1, data_web_1, order_data, order_index_web_1, step_count_web_1
+                    global count_web_1, data_web_1, order_index_web_1, step_count_web_1
                     center_coordinates = (
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
@@ -369,7 +381,7 @@ class Count:
                     bboxes = output[0:4]
                     id = output[4]
                     cls = output[5]
-                    global count_web_2, data_web_2, order_data, order_index_web_2, step_count_web_2
+                    global count_web_2, data_web_2, order_index_web_2, step_count_web_2
                     center_coordinates = (
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
@@ -461,7 +473,7 @@ def toping_draw_function(im0, count, order_index, step_count):
     
     # BOX
     overlay = resize_im0.copy()
-    box_alpha = 0.7
+    box_alpha = 0.9
     
     #basic check box
     if option != str:
@@ -470,26 +482,26 @@ def toping_draw_function(im0, count, order_index, step_count):
     if '콩x' in option:
         box = cv2.rectangle(overlay, (0,0),(int(w/2),int(h*0.8)), (0,0,255), -1)
     else:
-        box = cv2.rectangle(overlay, (0,0),(int(w/2),int(h*0.8)), (0,255,0), -1)
+        box = cv2.rectangle(overlay, (0,0),(int(w/2),int(h*0.8)), (0,100,0), -1)
             
     if '당근x' in option:
         box = cv2.rectangle(overlay, (int(w/2),0),(w,int(h*0.8)), (0,0,255), -1)
     else:
-        box = cv2.rectangle(overlay, (int(w/2),0),(w,int(h*0.8)), (0,255,0), -1)    
+        box = cv2.rectangle(overlay, (int(w/2),0),(w,int(h*0.8)), (0,100,0), -1)    
         
         
     final_check = cv2.addWeighted(resize_im0, (1-box_alpha), box, box_alpha, 0)
     
     
     if '콩x' in option:
-        final_check = draw_text(final_check, (int(w/4), int(h*0.4)), "콩 X", (0,0,0), 15)
+        final_check = draw_text(final_check, (int(w*0.2), int(h*0.4)), "콩 X", (0,0,0), 50)
     else:
-        final_check = draw_text(final_check, (int(w/4), int(h*0.4)), "콩 O", (0,0,0), 15)
+        final_check = draw_text(final_check, (int(w*0.2), int(h*0.4)), "콩 O", (0,0,0), 50)
     
     if '당근x' in option:
-        final_check = draw_text(final_check, (int(w*0.75), int(h*0.4)), "당근 X", (0,0,0), 15)
+        final_check = draw_text(final_check, (int(w*0.65), int(h*0.4)), "당근 X", (0,0,0), 50)
     else:
-        final_check = draw_text(final_check, (int(w*0.75), int(h*0.4)), "당근 O", (0,0,0), 15)
+        final_check = draw_text(final_check, (int(w*0.65), int(h*0.4)), "당근 O", (0,0,0), 50)
         
                 
     # devide_line
@@ -566,7 +578,8 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
-    except:
+    except Exception as e:
+        print(e)
         add_image = finish_img(im0 = im0)
     
     screen_show(show_vid, i, add_image)
@@ -581,7 +594,8 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = basic_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
-    except:
+    except Exception as e:
+        print(e)
         add_image = finish_img(im0 = im0)
         
     screen_show(show_vid, i, add_image)
