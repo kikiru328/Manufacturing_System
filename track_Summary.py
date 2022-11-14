@@ -437,7 +437,7 @@ def basic_draw_function(im0, count, order_index, step_count):
     total_count_text_org = (200,200)
     total_count_text = f"총 진행 개수 : {str(count)}"
     order_count_text_org = (200,300)
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}\n({step_count} / {order_data['Count'][order_index]})"
+    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
         next_option_text_org = (200,400)
         next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"
@@ -467,11 +467,11 @@ def toping_draw_function(im0, count, order_index, step_count):
     print(w,h)
     # Resize
     resize_im0 = imb.copy()
-    # resizeas = (w, int(h*0.8))
-    resizeas = (100, 100)
+    resizeas = (w, int(h*0.8))
+    # resizeas = (100, 100)
     im0 = cv2.resize(im0, dsize=resizeas,interpolation= cv2.INTER_LINEAR)
-    # resize_im0[:int(h*0.8),:,:] = im0
-    resize_im0[h-110:h-10, 50:150, :] = im0
+    resize_im0[:int(h*0.8),:,:] = im0
+    # resize_im0[h-110:h-10, 50:150, :] = im0
     
     # count line
     color = (255,0,0)
@@ -527,12 +527,15 @@ def toping_draw_function(im0, count, order_index, step_count):
     draw = ImageDraw.Draw(text_)
     
     # Text
-    total_count_text_org = (int(w*0.45), int(h*0.83))
+    # total_count_text_org = (int(w*0.45), int(h*0.83))
+    total_count_text_org = (int(w*0.05), int(h*0.83))
     total_count_text = f"총 진행 개수 : {str(count)}"
-    order_count_text_org = (int(w*0.45), int(h*0.88))
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]} ({step_count} / {order_data['Count'][order_index]})"
+    # order_count_text_org = (int(w*0.45), int(h*0.88))
+    order_count_text_org = (int(w*0.05), int(h*0.88))
+    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
-        next_option_text_org = (int(w*0.45), int(h*0.93))
+        # next_option_text_org = (int(w*0.45), int(h*0.93))
+        next_option_text_org = (int(w*0.05), int(h*0.93))
         next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
     except:
         next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
@@ -601,7 +604,7 @@ def A_draw_function(im0, count, order_index, step_count):
     total_count_text_org = (int(w*0.45), int(h*0.83))
     total_count_text = f"총 진행 개수 : {str(count)}"
     order_count_text_org = (int(w*0.45), int(h*0.88))
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]} ({step_count} / {order_data['Count'][order_index]})"
+    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
         next_option_text_org = (int(w*0.45), int(h*0.93))
         next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
