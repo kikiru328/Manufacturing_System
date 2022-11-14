@@ -344,7 +344,10 @@ class Count:
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
                     if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data_web_1):
-                        # count += 1
+
+                        # like sensor
+                        im0 = cv2.rectangle(im0, (0,0), (w,h), (0,0,255), -1)
+                        
                         count_web_1 += 1
                         data_web_1.append(id)
                         order_data_count = order_data['Count']
@@ -386,7 +389,7 @@ class Count:
                         int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
                     
                     if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data_web_2):
-                        # count += 1
+                        im0 = cv2.rectangle(im0, (0,0), (w,h), (0,0,255), -1)
                         count_web_2 += 1
                         data_web_2.append(id)
                         order_data_count = order_data['Count']
@@ -461,12 +464,14 @@ def toping_draw_function(im0, count, order_index, step_count):
     
     # Background
     imb = np.zeros(im0.shape, np.uint8)
-    
+    print(w,h)
     # Resize
     resize_im0 = imb.copy()
-    resizeas = (w, int(h*0.8))
-    im0 = cv2.resize(im0, dsize=resizeas)
-    resize_im0[:int(h*0.8),:,:] = im0
+    # resizeas = (w, int(h*0.8))
+    resizeas = (100, 100)
+    im0 = cv2.resize(im0, dsize=resizeas,interpolation= cv2.INTER_LINEAR)
+    # resize_im0[:int(h*0.8),:,:] = im0
+    resize_im0[h-110:h-10, 50:150, :] = im0
     
     # count line
     color = (255,0,0)
@@ -665,7 +670,8 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         im0, count_web_1, order_index_web_1, step_count_web_1 = Count.count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
-    except:
+    except Exception as e:
+        print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
     
     screen_show(show_vid, i, add_image)
@@ -681,6 +687,7 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         add_image = A_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
     except Exception as e:
+        print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
         
     screen_show(show_vid, i, add_image)
