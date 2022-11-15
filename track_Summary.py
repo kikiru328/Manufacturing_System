@@ -647,19 +647,19 @@ def finish_img(im0):
 
 def screen_show(show_vid, i, add_image):
     if show_vid:
-        # import screeninfo
-        # screen_id = i
-        # screen = screeninfo.get_monitors()[screen_id]               
-        # screen_width, screen_height = screen.width, screen.height
+        import screeninfo
+        screen_id = i
+        screen = screeninfo.get_monitors()[screen_id]               
+        screen_width, screen_height = screen.width, screen.height
         
-        # add_image = cv2.resize(add_image, (screen_width, screen_height))
+        add_image = cv2.resize(add_image, (screen_width, screen_height))
         
-        # add_image[0,0] = 0
-        # add_image[screen_height-2, 0] = 0
-        # add_image[0, screen_width-2] = 0
-        # add_image[screen_height-2, screen_width-2] = 0
-        # window_name = str(i)
-        window_name = 'A'
+        add_image[0,0] = 0
+        add_image[screen_height-2, 0] = 0
+        add_image[0, screen_width-2] = 0
+        add_image[screen_height-2, screen_width-2] = 0
+        window_name = str(i)
+        # window_name = 'A'
         # cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
         # cv2.moveWindow(window_name, screen.x -1, screen.y-1)
         # cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
