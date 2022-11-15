@@ -10,4 +10,4 @@ __pycache__/
 *.onnx
 *.engine
 src/cython-bbox
-
+*.mp4
