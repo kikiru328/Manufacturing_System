@@ -302,7 +302,11 @@ def run(
                 order_org = (200, 400)
                 alpha = 0.6
                 
-                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                font_size = 20
+                try:
+                    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
+                except:
+                    font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
                 
                             
                 # draw.text(org, f'개수 : {str(count)}',
@@ -454,7 +458,11 @@ def run(
                 order_org = (200, 400)
                 alpha = 0.6
                 
-                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                font_size = 20
+                try:
+                    font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", font_size)
+                except:
+                    font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
                 
                             
                 # draw.text(org, f'개수 : {str(count)}',

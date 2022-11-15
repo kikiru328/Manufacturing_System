@@ -113,7 +113,8 @@ def run(
     webcam = source.isnumeric() or source.endswith('.txt') or (is_url and not is_file)
     if is_url and is_file:
         source = check_file(source)  # download
-
+    
+    global save_dir
     # Directories
     if not isinstance(yolo_weights, list):  # single yolo model
         exp_name = yolo_weights.stem
@@ -186,16 +187,18 @@ def run(
 
         for i, det in enumerate(pred):  # detections per image
             seen += 1 
-            print(f'{seen:#^40}')   
+            # print(f'{seen:#^40}')   
             if i == 0:
-                im0 = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
+                im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
                
             elif i == 1:
-                im0 = webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
+                im0, save_dir, save_path, txt_file_name = webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
 
             # Save results (image with detections)
             if save_vid:
+      
                 # global im0
+                
                 if vid_path[i] != save_path:  # new video
                     vid_path[i] = save_path
                     if isinstance(vid_writer[i], cv2.VideoWriter):
@@ -270,7 +273,8 @@ def main(opt):
     
 
 def webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i):
-    print(f'Process detected : {i}')
+    # print(f'Process detected : {i}')
+    
     if webcam:  # nr_sources >= 1
         p, im0, _ = path[i], im0s[i].copy(), dataset.count
         p = Path(p)  # to Path
@@ -298,8 +302,7 @@ def webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, cu
     annotator = Annotator(im0, line_width=line_thickness, pil=not ascii) 
     return p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator
 
-def common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls,
-                          hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p):
+def common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls, hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p):
     if save_txt:
         # to MOT format
         bbox_left = output[0]
@@ -357,8 +360,7 @@ class Count:
                             order_index_web_1+= 1
                             step_count_web_1 = 0 
                             
-                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
-                                        show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
+                    common_save_functions(output, save_txt, txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
                     
             LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
         else:
@@ -398,8 +400,7 @@ class Count:
                             order_index_web_2+= 1
                             step_count_web_2 = 0
                             
-                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, 
-                                        show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
+                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
                     
             LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
         else:
@@ -464,7 +465,7 @@ def toping_draw_function(im0, count, order_index, step_count):
     
     # Background
     imb = np.zeros(im0.shape, np.uint8)
-    print(w,h)
+    # print(w,h)
     # Resize
     resize_im0 = imb.copy()
     resizeas = (w, int(h*0.8))
@@ -646,21 +647,22 @@ def finish_img(im0):
 
 def screen_show(show_vid, i, add_image):
     if show_vid:
-        import screeninfo
-        screen_id = i
-        screen = screeninfo.get_monitors()[screen_id]               
-        screen_width, screen_height = screen.width, screen.height
+        # import screeninfo
+        # screen_id = i
+        # screen = screeninfo.get_monitors()[screen_id]               
+        # screen_width, screen_height = screen.width, screen.height
         
-        add_image = cv2.resize(add_image, (screen_width, screen_height))
+        # add_image = cv2.resize(add_image, (screen_width, screen_height))
         
-        add_image[0,0] = 0
-        add_image[screen_height-2, 0] = 0
-        add_image[0, screen_width-2] = 0
-        add_image[screen_height-2, screen_width-2] = 0
-        window_name = str(i)
-        cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-        cv2.moveWindow(window_name, screen.x -1, screen.y-1)
-        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        # add_image[0,0] = 0
+        # add_image[screen_height-2, 0] = 0
+        # add_image[0, screen_width-2] = 0
+        # add_image[screen_height-2, screen_width-2] = 0
+        # window_name = str(i)
+        window_name = 'A'
+        # cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+        # cv2.moveWindow(window_name, screen.x -1, screen.y-1)
+        # cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             
         cv2.imshow(window_name, add_image)
         cv2.waitKey(1)
@@ -674,11 +676,11 @@ def webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         add_image = toping_draw_function(im0 = im0, count = count_web_1, order_index = order_index_web_1, step_count = step_count_web_1)
     except Exception as e:
-        print(f'{str(e):#^20}')
+        # print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
     
     screen_show(show_vid, i, add_image)
-    return im0    
+    return im0, save_dir, save_path, txt_file_name
     
         
 
@@ -690,11 +692,11 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         add_image = A_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
     except Exception as e:
-        print(f'{str(e):#^20}')
+        # print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
         
     screen_show(show_vid, i, add_image)
-    return im0  
+    return im0, save_dir, save_path, txt_file_name
     
     
 

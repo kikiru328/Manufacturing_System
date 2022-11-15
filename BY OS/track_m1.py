@@ -1,17 +1,3 @@
-from trackers.multi_tracker_zoo import create_tracker
-from yolov5.utils.plots import Annotator, colors, save_one_box
-from yolov5.utils.torch_utils import select_device, time_sync
-from yolov5.utils.general import (LOGGER, check_img_size, non_max_suppression, scale_coords, check_requirements, cv2,
-                                  check_imshow, xyxy2xywh, increment_path, strip_optimizer, colorstr, print_args, check_file)
-from yolov5.utils.dataloaders import VID_FORMATS, LoadImages, LoadStreams
-from yolov5.models.common import DetectMultiBackend
-import logging
-from PIL import ImageFont, ImageDraw, Image
-import torch.backends.cudnn as cudnn
-import torch
-from pathlib import Path
-import numpy as np
-import sys
 import argparse
 
 import os
@@ -22,6 +8,11 @@ os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
 os.environ["NUMEXPR_NUM_THREADS"] = "1"
 
+import sys
+from pathlib import Path
+import numpy as np
+import torch
+import torch.backends.cudnn as cudnn
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # yolov5 strongsort root directory
@@ -63,7 +54,14 @@ if str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid') not in
                     'reid' / 'torchreid'))  # add strong_sort ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-
+import logging
+from yolov5.models.common import DetectMultiBackend
+from yolov5.utils.dataloaders import VID_FORMATS, LoadImages, LoadStreams
+from yolov5.utils.general import (LOGGER, check_img_size, non_max_suppression, scale_coords, check_requirements, cv2,
+                                  check_imshow, increment_path, strip_optimizer, colorstr, print_args, check_file)
+from yolov5.utils.torch_utils import select_device, time_sync
+from yolov5.utils.plots import Annotator, colors, save_one_box
+from trackers.multi_tracker_zoo import create_tracker
 # remove duplicated stream handler to avoid duplicated logging
 logging.getLogger().removeHandler(logging.getLogger().handlers[0])
 
@@ -316,10 +314,10 @@ def run(
                 # cv2.putText(im0, str(count), org, font, fontScale, color, thickness, cv2.LINE_AA)
 
                 # windows
-                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+                # font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
 
                 # M1
-                # font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
+                font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 25)
 
                 img = Image.fromarray(imb)
                 draw = ImageDraw.Draw(img)

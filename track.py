@@ -295,7 +295,10 @@ def run(
             order_org = (200, 400)
             alpha = 0.6
             
-            font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 25)
+            try:
+                font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 10)
+            except:
+                font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 10)
             
                         
             draw.text(org, f'개수 : {str(count)}',
@@ -311,21 +314,21 @@ def run(
                 add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
                 # print(i)
                 
-                import screeninfo
-                screen_id = 1
-                screen = screeninfo.get_monitors()[screen_id]               
-                screen_width, screen_height = screen.width, screen.height
+                # import screeninfo
+                # screen_id = 1
+                # screen = screeninfo.get_monitors()[screen_id]               
+                # screen_width, screen_height = screen.width, screen.height
                 
-                add_image = cv2.resize(add_image, (screen_width, screen_height))
+                # add_image = cv2.resize(add_image, (screen_width, screen_height))
                 
-                add_image[0,0] = 0
-                add_image[screen_height-2, 0] = 0
-                add_image[0, screen_width-2] = 0
-                add_image[screen_height-2, screen_width-2] = 0
+                # add_image[0,0] = 0
+                # add_image[screen_height-2, 0] = 0
+                # add_image[0, screen_width-2] = 0
+                # add_image[screen_height-2, screen_width-2] = 0
                 window_name = '0'
-                cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-                cv2.moveWindow(window_name, screen.x -1, screen.y-1)
-                cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                # cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+                # cv2.moveWindow(window_name, screen.x -1, screen.y-1)
+                # cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
                     
                 cv2.imshow(window_name, add_image)
                 cv2.waitKey(1)  # 1 millisecond                
