@@ -191,6 +191,7 @@ def run(
             # print(f'{seen:#^40}')   
             if i == 0:
                 im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
+                im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
                
             elif i == 1:
                 im0, save_dir, save_path, txt_file_name = webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
