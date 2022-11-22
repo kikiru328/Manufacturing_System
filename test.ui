@@ -7,23 +7,88 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>142</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="START">
    <property name="geometry">
     <rect>
-     <x>150</x>
+     <x>20</x>
+     <y>80</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>START</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="FILEPATH">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>30</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>FILE</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="DAWN">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>30</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DAWN</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="NORMAL">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>30</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>NORMAL</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="DIRECT">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>30</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DIRECT</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="STOP">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
      <y>120</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>STOP</string>
    </property>
   </widget>
  </widget>
