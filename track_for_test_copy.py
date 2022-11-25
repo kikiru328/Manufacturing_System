@@ -339,7 +339,6 @@ def common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, sav
             txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
             save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
     
-       #%^%^%^%^%
 class Count:
     def count_1_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
         w, h = im0.shape[1], im0.shape[0]
@@ -717,9 +716,9 @@ def screen_show(show_vid, i, add_image):
         add_image[screen_height-2, screen_width-2] = 0
         window_name = str(i)
         # window_name = 'A'
-        # cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-        # cv2.moveWindow(window_name, screen.x -1, screen.y-1)
-        # cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+        cv2.moveWindow(window_name, screen.x -1, screen.y-1)
+        cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
             
         cv2.imshow(window_name, add_image)
         cv2.waitKey(1)

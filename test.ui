@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>142</height>
+    <width>417</width>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,14 +16,14 @@
   <widget class="QPushButton" name="START">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>80</y>
+     <x>120</x>
+     <y>240</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>START</string>
+    <string>시작</string>
    </property>
   </widget>
   <widget class="QPushButton" name="FILEPATH">
@@ -31,64 +31,151 @@
     <rect>
      <x>20</x>
      <y>30</y>
-     <width>75</width>
+     <width>101</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>FILE</string>
+    <string>파일열기</string>
    </property>
   </widget>
   <widget class="QPushButton" name="DAWN">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>30</y>
+     <x>20</x>
+     <y>70</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>DAWN</string>
+    <string>새벽배송</string>
    </property>
   </widget>
   <widget class="QPushButton" name="NORMAL">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>30</y>
+     <x>20</x>
+     <y>100</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>NORMAL</string>
+    <string>일반배송</string>
    </property>
   </widget>
   <widget class="QPushButton" name="DIRECT">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>30</y>
+     <x>20</x>
+     <y>130</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>DIRECT</string>
+    <string>직접배송</string>
    </property>
   </widget>
   <widget class="QPushButton" name="STOP">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>120</y>
+     <x>230</x>
+     <y>240</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>STOP</string>
+    <string>종료</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="File_label">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>30</y>
+     <width>261</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Plain</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="dawn_check">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>70</y>
+     <width>16</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="normal_check">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>100</y>
+     <width>16</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="direct_check">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>130</y>
+     <width>16</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="Parameters">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>70</y>
+     <width>261</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="insertbtn">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>160</y>
+     <width>101</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>적용</string>
    </property>
   </widget>
  </widget>

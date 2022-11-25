@@ -2,8 +2,6 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
-
-# from PyQt5 import QtCore
 # from PyQt5 import QtGui
 
 # python Ui Directories
@@ -22,36 +20,71 @@ class TEST_window(QMainWindow, TEST_UI):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("TEST")
-        self.START.clicked.connect(self.Test_func)
         self.FILEPATH.clicked.connect(self.FILE_func)
         self.DAWN.clicked.connect(self.DAWN_func)
         self.NORMAL.clicked.connect(self.NORMAL_func)
         self.DIRECT.clicked.connect(self.DIRECT_func)
+        self.insertbtn.clicked.connect(self.insert_func)
+        
+        
+        
+        self.START.clicked.connect(self.Test_func)
+        # self.START.toggle()
+
         self.STOP.clicked.connect(self.STOP_func)
+        # self.quit_app = QShortcut('Ctrl+C', self)
+        # self.quit_app.activated.connect(self.STOP_func)
         
         self.show()
+        
     def FILE_func(self):
-        global file_path
+        global file_path, file_name
         file_path = QFileDialog.getOpenFileName(self)[0]
+        file_name = os.path.basename(file_path)
+        self.File_label.setText(file_name)
         print(file_path)
     
     def DAWN_func(self):
         global sheet_name
         sheet_name = '요청사항표-새벽배송'
+        self.dawn_check.toggle()
+        self.normal_check.setChecked(False)
+        self.direct_check.setChecked(False)
+        
         print(sheet_name)
         
     def NORMAL_func(self):
         global sheet_name
         sheet_name = '요청사항표-일반배송'
+        self.normal_check.toggle()
+        self.dawn_check.setChecked(False)
+        self.direct_check.setChecked(False)
         print(sheet_name)
         
     def DIRECT_func(self):
         global sheet_name
         sheet_name = '요청사항표-직접배송'
+        self.direct_check.toggle()
+        self.dawn_check.setChecked(False)
+        self.normal_check.setChecked(False)
         print(sheet_name)
         
-                
+    def insert_func(self):
+        import datetime
+        today = datetime.datetime.today().strftime('%Y-%m-%d-%A %H:%M:%S')
+        parameter_str = f'현재시각 : {today} \n파일이름 : {file_name} \n배송종류 : {sheet_name}'
+        self.Parameters.setText(parameter_str)
+    
+    def STOP_func(self):
+        import pyautogui
+        pyautogui.press('Ctrl+C')
+        print('quit?')
+        # app.quit()
+        import sys
+        sys.exit()           
+        
     def Test_func(self):
+
         import track_for_test_copy
         from pathlib import Path
         import sys
@@ -72,7 +105,7 @@ class TEST_window(QMainWindow, TEST_UI):
             sys.path.append(str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid'))  # add strong_sort ROOT to PATH
         ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
         track_for_test_copy.run(
-            source = '0',
+            source = 'webcams.txt',
             yolo_weights=WEIGHTS / 'yolov5m.pt',
             reid_weights=WEIGHTS / 'osnet_x0_25_msmt17.pt',
             tracking_method='strongsort',
@@ -85,7 +118,7 @@ class TEST_window(QMainWindow, TEST_UI):
             save_txt=False,  # save results to *.txt
             save_conf=False,  # save confidences in --save-txt labels
             save_crop=False,  # save cropped prediction boxes
-            save_vid=False,  # save confidences in --save-txt labels
+            save_vid=True,  # save confidences in --save-txt labels
             nosave=False,  # do not save images/videos
             classes=None,  # filter by class: --class 0, or --class 0 2 3
             agnostic_nms=False,  # class-agnostic NMS
@@ -106,9 +139,7 @@ class TEST_window(QMainWindow, TEST_UI):
             sheet_name=sheet_name    
         )
 
-    def STOP_func(self):
-        import sys
-        sys.exit()
+
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
