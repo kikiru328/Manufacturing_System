@@ -541,7 +541,7 @@ def toping_draw_function(im0, count, order_index, step_count):
     
     # BOX
     overlay = resize_im0.copy()
-    box_alpha = 0.2
+    box_alpha = 0.9
     
     #basic check box
     if option != str:
@@ -634,7 +634,7 @@ def A_draw_function(im0, count, order_index, step_count):
     
     # BOX
     overlay = resize_im0.copy()
-    box_alpha = 0.2
+    box_alpha = 0.9
     
     #basic check box
     if option != str:
