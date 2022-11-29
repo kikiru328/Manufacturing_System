@@ -16,7 +16,7 @@ class TEST_window(QMainWindow, TEST_UI):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("제조시스템")
-        self.setWindowIcon(QtGui.QIcon("./yun.png"))
+        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
         self.FILEPATH.clicked.connect(self.FILE_func)
         self.DAWN.clicked.connect(self.DAWN_func)
         self.NORMAL.clicked.connect(self.NORMAL_func)
@@ -78,12 +78,13 @@ class TEST_window(QMainWindow, TEST_UI):
         global file_name, sheet_name
         file_name = ''
         sheet_name = ''
+        self.File_label.setText('')
         self.Parameters.setText('초기화되었습니다.\n다시 선택해주시기 바랍니다.')
         self.START.setEnabled(False)
     
     def STOP_func(self):
         self.msg.setWindowTitle('종료')
-        self.msg.setWindowIcon(QtGui.QIcon('./yun.png'))
+        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
         self.msg.setIcon(QMessageBox.Warning)
         self.msg.setText("제조시스템을 종료하겠습니다.")
         self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel) 
@@ -151,11 +152,15 @@ class TEST_window(QMainWindow, TEST_UI):
             )
         except ValueError as vle:
             self.msg.setWindowTitle('ERROR')
+            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+            self.msg.setIcon(QMessageBox.Information)            
             self.msg.setText("엑셀 및 배송 내용이 없습니다.")
             retval = self.msg.exec()
             
         except Exception as e:
             self.msg.setWindowTitle('DEV.ERROR')
+            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+            self.msg.setIcon(QMessageBox.Critical)
             self.msg.setText(f"{e}")
             retval = self.msg.exec()
         
