@@ -1,9 +1,8 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 import os
+from PyQt5 import QtGui
 import sys
-# from PyQt5 import QtGui
-
 # python Ui Directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_UI = uic.loadUiType(BASE_DIR + r'\test.ui')[0]
@@ -12,28 +11,27 @@ TEST_UI = uic.loadUiType(BASE_DIR + r'\test.ui')[0]
 
 # #### MAIN ###
 
-
-# class RFID_window(QDialog, QWidget, RFID_ui):
 class TEST_window(QMainWindow, TEST_UI):
     def __init__(self):
-        # super(RFID_window, self).__init__()
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("TEST")
+        self.setWindowTitle("제조시스템")
+        self.setWindowIcon(QtGui.QIcon("./yun.png"))
         self.FILEPATH.clicked.connect(self.FILE_func)
         self.DAWN.clicked.connect(self.DAWN_func)
         self.NORMAL.clicked.connect(self.NORMAL_func)
         self.DIRECT.clicked.connect(self.DIRECT_func)
         self.insertbtn.clicked.connect(self.insert_func)
+        self.clearbtn.clicked.connect(self.clear_func)
         
-        
-        
+        self.START.setEnabled(False)
         self.START.clicked.connect(self.Test_func)
-        # self.START.toggle()
-
         self.STOP.clicked.connect(self.STOP_func)
-        # self.quit_app = QShortcut('Ctrl+C', self)
-        # self.quit_app.activated.connect(self.STOP_func)
+        
+        self.dawn_check.setEnabled(False)
+        self.normal_check.setEnabled(False)
+        self.direct_check.setEnabled(False)
+        
         self.msg = QMessageBox()
         self.show()
         
@@ -69,20 +67,33 @@ class TEST_window(QMainWindow, TEST_UI):
         self.normal_check.setChecked(False)
         print(sheet_name)
         
-    def insert_func(self):
+    def insert_func(self):        
         import datetime
         today = datetime.datetime.today().strftime('%Y-%m-%d-%A %H:%M:%S')
         parameter_str = f'현재시각 : {today} \n파일이름 : {file_name} \n배송종류 : {sheet_name}'
         self.Parameters.setText(parameter_str)
+        self.START.setEnabled(True)
+        
+    def clear_func(self):
+        global file_name, sheet_name
+        file_name = ''
+        sheet_name = ''
+        self.Parameters.setText('초기화되었습니다.\n다시 선택해주시기 바랍니다.')
+        self.START.setEnabled(False)
     
     def STOP_func(self):
-        import pyautogui
         self.msg.setWindowTitle('종료')
+        self.msg.setWindowIcon(QtGui.QIcon('./yun.png'))
+        self.msg.setIcon(QMessageBox.Warning)
         self.msg.setText("제조시스템을 종료하겠습니다.")
-        retval = self.msg.exec()
-        import sys
-        sys.exit()           
-        
+        self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel) 
+        reply = self.msg.exec()
+        if reply == QMessageBox.Yes:    
+            import sys
+            sys.exit()           
+        else:
+            pass
+            
         
     def Test_func(self):
         try:
@@ -92,7 +103,6 @@ class TEST_window(QMainWindow, TEST_UI):
             import os
             FILE = Path(os.getcwd()).resolve()
             ROOT = FILE.parents[0] 
-            # ROOT = os.getcwd()
             WEIGHTS = ROOT / 'weights'
             if str(ROOT) not in sys.path:
                 sys.path.append(str(ROOT))  # add ROOT to PATH
@@ -140,12 +150,10 @@ class TEST_window(QMainWindow, TEST_UI):
                 sheet_name=sheet_name    
             )
         except ValueError as vle:
-            # QErrorMessage(e)
-            # self.msg.setIcon(QMessageBox.critical)
             self.msg.setWindowTitle('ERROR')
-            self.msg.setText("엑셀 내용이 없습니다.")
-            # self.msg.setStandardButtons(QMessageBox.Ok, QMessageBox.Cancel)
+            self.msg.setText("엑셀 및 배송 내용이 없습니다.")
             retval = self.msg.exec()
+            
         except Exception as e:
             self.msg.setWindowTitle('DEV.ERROR')
             self.msg.setText(f"{e}")
