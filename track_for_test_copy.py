@@ -209,6 +209,12 @@ def run(
                     im0, save_dir, save_path, txt_file_name = webcam3(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
                 except Exception as e:
                     print(e)
+                    
+            elif i == 3:
+                try:
+                    im0, save_dir, save_path, txt_file_name = webcam4(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
+                except Exception as e:
+                    print(e)
             # Save results (image with detections)
             if save_vid:
       
@@ -451,7 +457,7 @@ def count_3_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2
                         data_web_3.append(id)
                         order_data_count = order_data['Count']
                         step_count_web_3 += 1 
-                        if step_count_web_3 >= int(order_data_count[order_index_web_2]):
+                        if step_count_web_3 >= int(order_data_count[order_index_web_3]):
                             order_index_web_3+= 1
                             step_count_web_3 = 0
                             
@@ -464,6 +470,46 @@ def count_3_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2
             pass
         im0 = annotator.result()
         return im0, count_web_3, order_index_web_3, step_count_web_3
+
+def count_4_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
+        w, h = im0.shape[1], im0.shape[0]
+        if det is not None and len(det):
+            det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+            for c in det[:, -1].unique():
+                n = (det[:, -1] == c).sum()  # detections per class
+                s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "
+            t4 = time_sync()
+            outputs[i] = tracker_list[i].update(det.cpu(), im0)
+            t5 = time_sync()
+            dt[3] += t5 - t4
+            if len(outputs[i]) > 0:
+                for j, (output, conf) in enumerate(zip(outputs[i], det[:, 4])):
+                    bboxes = output[0:4]
+                    id = output[4]
+                    cls = output[5]
+                    global count_web_4, data_web_4, order_index_web_4, step_count_web_4
+                    center_coordinates = (
+                        int(bboxes[0] + (bboxes[2]-bboxes[0])/2), int(bboxes[1] + (bboxes[3] - bboxes[1])/2))
+                    
+                    if (int(bboxes[0]+(bboxes[2] - bboxes[0])/2) < (int(w/2))) and (id not in data_web_3):
+                        im0 = cv2.rectangle(im0, (0,0), (w,h), (0,0,255), -1)
+                        count_web_4 += 1
+                        data_web_4.append(id)
+                        order_data_count = order_data['Count']
+                        step_count_web_4 += 1 
+                        if step_count_web_4 >= int(order_data_count[order_index_web_4]):
+                            order_index_web_4+= 1
+                            step_count_web_4 = 0
+                            
+                    common_save_functions(output, save_txt,txt_path, frame_idx, i, save_vid, save_crop, show_vid, id, cls,hide_labels, names, hide_conf, conf, hide_class, annotator, bboxes, path, imc, save_dir, p)
+                    
+            # LOGGER.info(f'{s}Done. yolo:({t3 - t2:.3f}s), {tracking_method}:({t5 - t4:.3f}s)')
+        else:
+            #strongsort_list[i].increment_ages()
+            # LOGGER.info('No detections')    
+            pass
+        im0 = annotator.result()
+        return im0, count_web_4, order_index_web_4, step_count_web_4
 
 
 def draw_text(img, org, text, color, font_size):
@@ -759,6 +805,20 @@ def webcam3(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
         
         im0, count_web_3, order_index_web_3, step_count_web_3 = Count.count_3_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
+        
+        add_image = A_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
+    except Exception as e:
+        # print(f'{str(e):#^20}')
+        add_image = finish_img(im0 = im0)
+        
+    screen_show(show_vid, i, add_image)
+    return im0, save_dir, save_path, txt_file_name
+
+def webcam4(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class):
+    try:
+        p, im, im0, s, txt_file_name, save_path, txt_path, imc, annotator = webcam_start_function(webcam,path, im, im0s, dataset,s, save_dir, source, curr_frames,line_thickness,save_crop,i)
+        
+        im0, count_web_3, order_index_web_3, step_count_web_3 = Count.count_4_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
         add_image = A_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
     except Exception as e:
