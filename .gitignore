@@ -11,3 +11,5 @@ __pycache__/
 *.engine
 src/cython-bbox
 *.mp4
+*.xlsx
+*.ipynb

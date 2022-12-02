@@ -103,7 +103,8 @@ class TEST_window(QMainWindow, TEST_UI):
             import sys
             import os
             FILE = Path(os.getcwd()).resolve()
-            ROOT = FILE.parents[0] 
+            ROOT = FILE
+            # ROOT = FILE.parents[0] 
             WEIGHTS = ROOT / 'weights'
             if str(ROOT) not in sys.path:
                 sys.path.append(str(ROOT))  # add ROOT to PATH
@@ -153,17 +154,22 @@ class TEST_window(QMainWindow, TEST_UI):
         except ValueError as vle:
             self.msg.setWindowTitle('ERROR')
             self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
-            self.msg.setIcon(QMessageBox.Information)            
-            self.msg.setText("엑셀 및 배송 내용이 없습니다.")
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setText(f"{vle}\n엑셀 및 배송 내용이 없습니다.")
             retval = self.msg.exec()
             
+            self.START.setEnabled(False)
         except Exception as e:
             self.msg.setWindowTitle('DEV.ERROR')
             self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
             self.msg.setIcon(QMessageBox.Critical)
-            self.msg.setText(f"{e}")
+            if 'Failed to open' in str(e):
+                webcam_error = f"{e}\n웹 캠 연결이 되지 않았습니다.\n다시확인 바랍니다."
+                self.msg.setText(f"{webcam_error}")
+            else:
+                self.msg.setText(f"{e}")
             retval = self.msg.exec()
-        
+            self.START.setEnabled(False)
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     Window = TEST_window()
