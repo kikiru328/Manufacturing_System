@@ -11,8 +11,14 @@ TEST_UI = uic.loadUiType(BASE_DIR + '/test.ui')[0]
 # Content
 
 # #### MAIN ###
-
+try:
+    os.chdir(sys._MEIPASS)
+    print(sys._MEIPASS)
+except:
+    os.chdir(os.getcwd())
+    
 class TEST_window(QMainWindow, TEST_UI):
+    
     def __init__(self):
         super().__init__()
         self.setupUi(self)
