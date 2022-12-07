@@ -22,7 +22,7 @@ WEIGHTS = ROOT / 'weights'
 count_web_1, order_index_web_1, step_count_web_1, data_web_1 = 0, 0, 0, []
 count_web_2, order_index_web_2, step_count_web_2, data_web_2 = 0, 0, 0, []
 count_web_3, order_index_web_3, step_count_web_3, data_web_3 = 0, 0, 0, []
-
+count_web_4, order_index_web_4, step_count_web_4, data_web_4 = 0, 0, 0, []
 
 
 
@@ -37,8 +37,9 @@ if str(ROOT / 'trackers' / 'strong_sort') not in sys.path:
 if str(ROOT / 'trackers' / 'ocsort') not in sys.path:
     sys.path.append(str(ROOT / 'trackers' / 'ocsort'))  # add strong_sort ROOT to PATH
 if str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid') not in sys.path:
-    sys.path.append(str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid'))  # add strong_sort ROOT to PATH
+    sys.path.append(str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid' / 'configs'))  # add strong_sort ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+
 
 # import logging
 from yolov5.models.common import DetectMultiBackend
@@ -430,6 +431,8 @@ class Count:
             pass
         im0 = annotator.result()
         return im0, count_web_2, order_index_web_2, step_count_web_2
+
+    
     
 def count_3_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p):
         w, h = im0.shape[1], im0.shape[0]
@@ -525,39 +528,6 @@ def draw_text(img, org, text, color, font_size):
     return np.array(text_)
      
 
-def basic_draw_function(im0, count, order_index, step_count):
-    w, h = im0.shape[1], im0.shape[0]
-    from PIL import Image
-    from PIL import ImageFont
-    from PIL import ImageDraw
-    imb = np.zeros(im0.shape, np.uint8)
-    color = (0,255,0)
-    start_point = (int(w/2), 0)
-    end_point = (int(w/2), h)
-    cv2.line(im0, start_point, end_point, color, thickness=2)
-    background = Image.fromarray(imb)
-    draw = ImageDraw.Draw(background)
-    total_count_text_org = (200,200)
-    total_count_text = f"총 진행 개수 : {str(count)}"
-    order_count_text_org = (200,300)
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
-    try:
-        next_option_text_org = (200,400)
-        next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"
-    except:
-        next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
-    alpha = 0.3
-    try:
-        font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 11)
-    except:
-        font = ImageFont.truetype("/Volumes/Macintosh HD/System/Library/Fonts/AppleSDGothicNeo.ttc", 11)
-    draw.text(total_count_text_org, total_count_text, font = font, fill = (0, 255, 0))
-    draw.text(order_count_text_org, order_count_text, font=font, fill=(0, 255, 0))
-    draw.text(next_option_text_org, next_option_text, font=font, fill=(0,255,0))
-    background_with_text = np.array(background)
-    add_image = cv2.addWeighted(im0, alpha, background_with_text, (1-alpha), 0)
-    return add_image
-
 def toping_draw_function(im0, count, order_index, step_count): 
     w, h = im0.shape[1], im0.shape[0]
     
@@ -632,16 +602,16 @@ def toping_draw_function(im0, count, order_index, step_count):
     # Text
     # total_count_text_org = (int(w*0.45), int(h*0.83))
     total_count_text_org = (int(w*0.05), int(h*0.83))
-    total_count_text = f"총 진행 개수 : {str(count)}"
+    total_count_text = f"{'총 진행 개수':10} :{' ':2}{str(count)}"
     # order_count_text_org = (int(w*0.45), int(h*0.88))
     order_count_text_org = (int(w*0.05), int(h*0.88))
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
+    order_count_text = f"{'현재 옵션':12} :{' ':2}{order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
         # next_option_text_org = (int(w*0.45), int(h*0.93))
         next_option_text_org = (int(w*0.05), int(h*0.93))
-        next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
+        next_option_text = f"{'다음 옵션':12} :{' ':2}{order_data['Option'][order_index+1]}"  
     except:
-        next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
+        next_option_text = f"{'다음 옵션':12} :{' ':2}현재가 마지막 옵션입니다."
     try:
         font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
     except:
@@ -653,7 +623,7 @@ def toping_draw_function(im0, count, order_index, step_count):
     add_image = np.array(text_)
     return add_image
 
-def A_draw_function(im0, count, order_index, step_count): 
+def basic_option_draw_function(im0, count, order_index, step_count): 
     w, h = im0.shape[1], im0.shape[0]
     
     from PIL import Image
@@ -705,14 +675,14 @@ def A_draw_function(im0, count, order_index, step_count):
     
     # Text
     total_count_text_org = (int(w*0.45), int(h*0.83))
-    total_count_text = f"총 진행 개수 : {str(count)}"
+    total_count_text = f"{'총 진행 개수':10} :{' ':2}{str(count)}"
     order_count_text_org = (int(w*0.45), int(h*0.88))
-    order_count_text = f"현재 옵션 : {order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
+    order_count_text = f"{'현재 옵션':12} :{' ':2}{order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
         next_option_text_org = (int(w*0.45), int(h*0.93))
-        next_option_text = f"다음 옵션 : {order_data['Option'][order_index+1]}"  
+        next_option_text = f"{'다음 옵션':12} :{' ':2}{order_data['Option'][order_index+1]}"  
     except:
-        next_option_text = f"다음 옵션 : 현재가 마지막 옵션입니다."
+        next_option_text = f"{'다음 옵션':12} :{' ':2}현재가 마지막 옵션입니다."
     try:
         font = ImageFont.truetype("C:/Windows/Fonts/batang.ttc", 20)
     except:
@@ -792,7 +762,7 @@ def webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         im0, count_web_2, order_index_web_2, step_count_web_2 = Count.count_2_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
-        add_image = A_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
+        add_image = basic_option_draw_function(im0 = im0, count = count_web_2, order_index = order_index_web_2, step_count = step_count_web_2)
     except Exception as e:
         # print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
@@ -806,7 +776,7 @@ def webcam3(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         im0, count_web_3, order_index_web_3, step_count_web_3 = Count.count_3_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
-        add_image = A_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
+        add_image = basic_option_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
     except Exception as e:
         # print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)
@@ -820,7 +790,7 @@ def webcam4(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, l
         
         im0, count_web_3, order_index_web_3, step_count_web_3 = Count.count_4_function(det, im, s, im0, names, outputs, tracker_list, dt, i, t3,t2,tracking_method,annotator, save_txt, txt_path,frame_idx, save_vid, save_crop, show_vid, hide_labels, hide_conf, hide_class, path, imc, save_dir, p)
         
-        add_image = A_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
+        add_image = basic_option_draw_function(im0 = im0, count = count_web_3, order_index = order_index_web_3, step_count = step_count_web_3)
     except Exception as e:
         # print(f'{str(e):#^20}')
         add_image = finish_img(im0 = im0)

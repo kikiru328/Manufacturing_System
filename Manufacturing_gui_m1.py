@@ -1,17 +1,24 @@
-from PyQt5.QtWidgets import *
-from PyQt5 import uic
+from PyQt6.QtWidgets import *
+from PyQt6 import uic
 import os
-from PyQt5 import QtGui
+from PyQt6 import QtGui
 import sys
 # python Ui Directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEST_UI = uic.loadUiType(BASE_DIR + r'\test.ui')[0]
-
+TEST_UI = uic.loadUiType(BASE_DIR + '/Manufacturing_UI.ui')[0]
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# TEST_UI = uic.loadUiType('./test.ui')[0]
 # Content
 
 # #### MAIN ###
-
+try:
+    os.chdir(sys._MEIPASS)
+    print(sys._MEIPASS)
+except:
+    os.chdir(os.getcwd())
+    
 class TEST_window(QMainWindow, TEST_UI):
+    
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -85,11 +92,11 @@ class TEST_window(QMainWindow, TEST_UI):
     def STOP_func(self):
         self.msg.setWindowTitle('종료')
         self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
-        self.msg.setIcon(QMessageBox.Warning)
+        self.msg.setIcon(QMessageBox.Icon.Warning)
         self.msg.setText("제조시스템을 종료하겠습니다.")
-        self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel) 
+        self.msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.Cancel) 
         reply = self.msg.exec()
-        if reply == QMessageBox.Yes:    
+        if reply == QMessageBox.StandardButton.Yes:    
             import sys
             sys.exit()           
         else:
@@ -98,7 +105,7 @@ class TEST_window(QMainWindow, TEST_UI):
         
     def Test_func(self):
         try:
-            import track_for_test_copy
+            import track_for_test_copym1
             from pathlib import Path
             import sys
             import os
@@ -117,9 +124,10 @@ class TEST_window(QMainWindow, TEST_UI):
             if str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid') not in sys.path:
                 sys.path.append(str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid'))  # add strong_sort ROOT to PATH
             ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-            track_for_test_copy.run(
+            track_for_test_copym1.run(
                 source = 'webcams.txt',
-                yolo_weights=WEIGHTS / 'yolov5m.pt',
+                # yolo_weights=WEIGHTS / 'yolov5m.pt',
+                yolo_weights=WEIGHTS / 'best.pt',
                 reid_weights=WEIGHTS / 'osnet_x0_25_msmt17.pt',
                 tracking_method='strongsort',
                 imgsz=(640, 640),  # inference size (height, width)
@@ -131,7 +139,7 @@ class TEST_window(QMainWindow, TEST_UI):
                 save_txt=False,  # save results to *.txt
                 save_conf=False,  # save confidences in --save-txt labels
                 save_crop=False,  # save cropped prediction boxes
-                save_vid=True,  # save confidences in --save-txt labels
+                save_vid=False,  # save confidences in --save-txt labels
                 nosave=False,  # do not save images/videos
                 classes=None,  # filter by class: --class 0, or --class 0 2 3
                 agnostic_nms=False,  # class-agnostic NMS
@@ -154,7 +162,7 @@ class TEST_window(QMainWindow, TEST_UI):
         except ValueError as vle:
             self.msg.setWindowTitle('ERROR')
             self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
-            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setIcon(QMessageBox.Icon.Information)
             self.msg.setText(f"{vle}\n엑셀 및 배송 내용이 없습니다.")
             retval = self.msg.exec()
             
@@ -162,7 +170,7 @@ class TEST_window(QMainWindow, TEST_UI):
         except Exception as e:
             self.msg.setWindowTitle('DEV.ERROR')
             self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
-            self.msg.setIcon(QMessageBox.Critical)
+            self.msg.setIcon(QMessageBox.Icon.Critical)
             if 'Failed to open' in str(e):
                 webcam_error = f"{e}\n웹 캠 연결이 되지 않았습니다.\n다시확인 바랍니다."
                 self.msg.setText(f"{webcam_error}")
