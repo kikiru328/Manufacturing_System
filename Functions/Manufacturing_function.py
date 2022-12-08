@@ -191,14 +191,13 @@ def run(
 
         for i, det in enumerate(pred):  # detections per image
             seen += 1 
-            # print(f'{seen:#^40}')   
+            print(f'{seen:#^40}')   
             if i == 0:
                 try:
                     im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
                 except Exception as e:
                     print(e)
-            
-               
+              
             elif i == 1:
                 try:
                     im0, save_dir, save_path, txt_file_name = webcam2(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
@@ -674,12 +673,12 @@ def basic_option_draw_function(im0, count, order_index, step_count):
     draw = ImageDraw.Draw(text_)
     
     # Text
-    total_count_text_org = (int(w*0.45), int(h*0.83))
+    total_count_text_org = (int(w*0.05), int(h*0.83))
     total_count_text = f"{'총 진행 개수':10} :{' ':2}{str(count)}"
-    order_count_text_org = (int(w*0.45), int(h*0.88))
+    order_count_text_org = (int(w*0.05), int(h*0.88))
     order_count_text = f"{'현재 옵션':12} :{' ':2}{order_data['Option'][order_index]}            ({step_count} / {order_data['Count'][order_index]})"
     try:
-        next_option_text_org = (int(w*0.45), int(h*0.93))
+        next_option_text_org = (int(w*0.05), int(h*0.93))
         next_option_text = f"{'다음 옵션':12} :{' ':2}{order_data['Option'][order_index+1]}"  
     except:
         next_option_text = f"{'다음 옵션':12} :{' ':2}현재가 마지막 옵션입니다."
