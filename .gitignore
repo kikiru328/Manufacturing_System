@@ -13,3 +13,5 @@ src/cython-bbox
 *.mp4
 *.xlsx
 *.ipynb
+*.jpg
+*.jpeg
