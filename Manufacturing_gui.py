@@ -101,24 +101,6 @@ class TEST_window(QMainWindow, TEST_UI):
             
             from Functions import Manufacturing_function
             WEIGHTS = Manufacturing_function.WEIGHTS
-            # from pathlib import Path
-            # import sys
-            # import os
-            # FILE = Path(os.getcwd()+'/Functions').resolve()
-            # WEIGHT_ROOT = FILE
-            # ROOT = FILE
-            # WEIGHTS = WEIGHT_ROOT / 'weights'
-            # if str(ROOT) not in sys.path:
-            #     sys.path.append(str(ROOT))  # add ROOT to PATH
-            # if str(ROOT / 'yolov5') not in sys.path:
-            #     sys.path.append(str(ROOT / 'yolov5'))  # add yolov5 ROOT to PATH
-            # if str(ROOT / 'trackers' / 'strong_sort') not in sys.path:
-            #     sys.path.append(str(ROOT / 'trackers' / 'strong_sort'))  # add strong_sort ROOT to PATH
-            # if str(ROOT / 'trackers' / 'ocsort') not in sys.path:
-            #     sys.path.append(str(ROOT / 'trackers' / 'ocsort'))  # add strong_sort ROOT to PATH
-            # if str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid') not in sys.path:
-            #     sys.path.append(str(ROOT / 'trackers' / 'strong_sort' / 'deep' / 'reid' / 'torchreid'))  # add strong_sort ROOT to PATH
-            # ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
             Manufacturing_function.run(
                 source = 'webcams.txt',
                 yolo_weights=WEIGHTS / 'yolov5m.pt',
@@ -132,7 +114,7 @@ class TEST_window(QMainWindow, TEST_UI):
                 show_vid=True,  # show results
                 save_txt=False,  # save results to *.txt
                 save_conf=False,  # save confidences in --save-txt labels
-                save_crop=False,  # save cropped prediction boxes
+                save_crop=True,  # save cropped prediction boxes
                 save_vid=True,  # save confidences in --save-txt labels
                 nosave=False,  # do not save images/videos
                 classes=None,  # filter by class: --class 0, or --class 0 2 3
