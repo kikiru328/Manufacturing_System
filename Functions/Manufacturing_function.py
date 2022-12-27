@@ -15,7 +15,10 @@ import torch
 import torch.backends.cudnn as cudnn
 
 FILE = Path(__file__).resolve()
+# print(FILE)
+# ROOT = os.path.dirname(os.path.abspath(__file__))
 ROOT = FILE.parents[0]  # yolov5 strongsort root directory
+# print("ROOT", FILE)
 WEIGHTS = ROOT / 'weights'
 
 

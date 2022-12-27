@@ -6,7 +6,12 @@ import sys
 # python Ui Directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEST_UI = uic.loadUiType(BASE_DIR + r'\Manufacturing_UI.ui')[0]
-
+# print(BASE_DIR)
+sys.path.append(BASE_DIR + r'\Functions')
+sys.path.append(BASE_DIR + r'\Functions\yolov5')
+sys.path.append(BASE_DIR + r'\Functions\trackers')
+sys.path.append(BASE_DIR + r'\Functions\weights')
+print("제조시스템이 실행됩니다.")
 # Content
 
 # #### MAIN ###
@@ -97,8 +102,7 @@ class TEST_window(QMainWindow, TEST_UI):
             
         
     def Test_func(self):
-        try:
-            
+        try:  
             from Functions import Manufacturing_function
             WEIGHTS = Manufacturing_function.WEIGHTS
             Manufacturing_function.run(
