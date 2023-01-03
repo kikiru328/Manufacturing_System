@@ -5,7 +5,7 @@ from PyQt5 import QtGui
 import sys
 # python Ui Directories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEST_UI = uic.loadUiType(BASE_DIR + r'\Manufacturing_UI.ui')[0]
+TEST_UI = uic.loadUiType(BASE_DIR + r'\Archive\Manufacturing_UI.ui')[0]
 # print(BASE_DIR)
 sys.path.append(BASE_DIR + r'\Functions')
 sys.path.append(BASE_DIR + r'\Functions\yolov5')
@@ -21,7 +21,7 @@ class TEST_window(QMainWindow, TEST_UI):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle("제조시스템")
-        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\Archive\yun.png"))
         self.FILEPATH.clicked.connect(self.FILE_func)
         self.DAWN.clicked.connect(self.DAWN_func)
         self.NORMAL.clicked.connect(self.NORMAL_func)
@@ -89,7 +89,7 @@ class TEST_window(QMainWindow, TEST_UI):
     
     def STOP_func(self):
         self.msg.setWindowTitle('종료')
-        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+        self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\Archive\yun.png"))
         self.msg.setIcon(QMessageBox.Warning)
         self.msg.setText("제조시스템을 종료하겠습니다.")
         self.msg.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel) 
@@ -107,7 +107,7 @@ class TEST_window(QMainWindow, TEST_UI):
             WEIGHTS = Manufacturing_function.WEIGHTS
             Manufacturing_function.run(
                 source = 'webcams.txt',
-                yolo_weights=WEIGHTS / 'yolov5m.pt',
+                yolo_weights=WEIGHTS / 'best.pt',
                 reid_weights=WEIGHTS / 'osnet_x0_25_msmt17.pt',
                 tracking_method='strongsort',
                 imgsz=(640, 640),  # inference size (height, width)
@@ -141,7 +141,7 @@ class TEST_window(QMainWindow, TEST_UI):
             )
         except ValueError as vle:
             self.msg.setWindowTitle('ERROR')
-            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\Archive\yun.png"))
             self.msg.setIcon(QMessageBox.Information)
             self.msg.setText(f"{vle}\n엑셀 및 배송 내용이 없습니다.")
             retval = self.msg.exec()
@@ -149,7 +149,7 @@ class TEST_window(QMainWindow, TEST_UI):
             self.START.setEnabled(False)
         except Exception as e:
             self.msg.setWindowTitle('DEV.ERROR')
-            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\yun.png"))
+            self.setWindowIcon(QtGui.QIcon(BASE_DIR+r"\Archive\yun.png"))
             self.msg.setIcon(QMessageBox.Critical)
             if 'Failed to open' in str(e):
                 webcam_error = f"{e}\n웹 캠 연결이 되지 않았습니다.\n다시확인 바랍니다."
