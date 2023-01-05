@@ -16,3 +16,4 @@ src/cython-bbox
 *.jpg
 *.jpeg
 .DS_Store/
+.prettierignore
