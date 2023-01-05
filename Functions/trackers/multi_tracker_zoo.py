@@ -3,13 +3,16 @@ from trackers.strong_sort.strong_sort import StrongSORT
 from trackers.ocsort.ocsort import OCSort
 from trackers.bytetrack.byte_tracker import BYTETracker
 
+import os
 
 def create_tracker(tracker_type, appearance_descriptor_weights, device, half):
     if tracker_type == 'strongsort':
         # initialize StrongSORT
         cfg = get_config()
-        cfg.merge_from_file(r'D:\workspace\agp\Deepsort_yolov5\Functions\trackers\strong_sort\configs\strong_sort.yaml')
-
+        cfg.merge_from_file(os.path.realpath('./strong_sort/configs/strong_sort.yaml'))
+        
+        # match the path to your enviroment
+        
         strongsort = StrongSORT(
             appearance_descriptor_weights,
             device,
