@@ -11,7 +11,8 @@ This repository contains a highly configurable two-stage-tracker that adjusts to
 따라서 제조시 옵션을 상시 제공하여 불량률을 줄일 수 있는 시스템을 개발해보았다.  
 
 객체 추적은 `yolov5-s` 모델을 사용하였고, 추적을 추적을 위해 `Deepsort` 알고리즘을 사용하였다.  
-이 프로그램은 추적 뿐 아니라 개수를 세야하기 떄문에 객체 중앙점을 기점으로 객체의 중앙점이 넘어설 때, count += 1 이 되며  해당 옵션을 제공하게 된다.  
+이 프로그램은 추적 뿐 아니라 개수를 세야하기 떄문에 객체 중앙점을 기점으로 객체의 중앙점이 넘어설 때,  
+count += 1 이 되며  해당 옵션을 제공하게 된다.  
 
 해당 옵션은 `screeninfo`를 이용해서 모니터에 제공한다.  
 
@@ -21,12 +22,14 @@ GUI는 pyqt5로 개발하여 사용자의 편리성을 높였다.
 <br/>
 
 The conveyor belt system has an advantage of enabling manufacturing in order in a manufacturing process.
-However, there is a disadvantage that the defect rate is higher than that of machines when manufactured by humans. In addition, if there are many options, the defect rate increases even more.  
+However, there is a disadvantage that the defect rate is higher than that of machines when manufactured by humans.  
+In addition, if there are many options, the defect rate increases even more.  
 
 Therefore, I have developed a system that can reduce the defect rate by always providing options during manufacturing.  
 
 The 'yolov5-s' model was used for object tracking, and the 'Deepsort' algorithm was used for tracking.
-Because this program requires not only tracking but also counting, when the center point of the object exceeds the center point of the object, count + = 1 is given and the corresponding option is provided.  
+Because this program requires not only tracking but also counting, when the center point of the object   
+exceeds the center point of the object, count + = 1 is given and the corresponding option is provided.  
 
 This option is provided to the monitor using `'screeninfo'`.  
  
