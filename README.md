@@ -72,3 +72,8 @@ GUI was developed as`pyqt5` to increase user convenience.
 ┗ 📜webcams.txt                ━━━ # Input Videos
 
 ```
+
+# Find Center point
+Yolov5 - Utils - plots 내부에 아래와 같이 추가한다.
+![Box_Label in Yolov5](https://user-images.githubusercontent.com/60537388/210808158-dd82fed1-82de-49de-8aee-bc25039e19ba.png)
+
