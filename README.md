@@ -17,6 +17,8 @@ This repository contains a highly configurable two-stage-tracker that adjusts to
 
 GUI는 pyqt5로 개발하여 사용자의 편리성을 높였다.  
 
+<br/>
+<br/>
 
 The conveyor belt system has an advantage of enabling manufacturing in order in a manufacturing process.
 However, there is a disadvantage that the defect rate is higher than that of machines when manufactured by humans. In addition, if there are many options, the defect rate increases even more.  
@@ -29,9 +31,9 @@ Because this program requires not only tracking but also counting, when the cent
 This option is provided to the monitor using `'screeninfo'`.  
  
 GUI was developed as`pyqt5` to increase user convenience.  
-```
+<br/>
 # Brief Folder Tree
-
+```
 📦Deepsort_yolov5
 ┣ 📂Archive
 ┃ ┣ 📂Functions
@@ -118,5 +120,36 @@ Yolov5 - Utils - plots 내부에 아래와 같이 추가한다.
 
 ![Box_Label in Yolov5](https://user-images.githubusercontent.com/60537388/210808158-dd82fed1-82de-49de-8aee-bc25039e19ba.png)
 
+# Tracker
+📜Manufacturing_functions.py INSIDE.    
+> `function read_order` = excel reader  
+> `function webcam_start_function` = load data from webcam  
+> `function common_save_functions` = save label adn vid, crop, show_vid  
+> `Class Count - count_#_functions` = count when object center point is over the standard line
+> `function draw_text` = draw text over the image to show options 
+> `function screen_show` = make image showing for screen by webcams.
+> `function webcam#` = make total functions  
+
+Running after  
+~~~python
+# Process detections
+for i, det in enumerate(pred):
+  if i == 0:
+      try:
+        im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
+      except Exception as e:
+        print(e)
+~~~
+i == webcam number and screen number by port
+function webcam1 == total functions `function webcam#`
+
+
+# Start by
+(2023-01-06 : Delete install.exe )
+
+Should make exe file from `Archive` with `pyinstaller`
+- start install.exe
+- make environment ( 30 ~ 60 m by computer environment )
+- start program in desktop folder.
 
 
