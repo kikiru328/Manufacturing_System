@@ -1,9 +1,10 @@
 ###### Introduction
 
-<font size='1'>A</font>
-This repository contains a highly configurable two-stage-tracker that adjusts to different deployment scenarios.  
-[YOLOv5](https://github.com/ultralytics/yolov5) for Detection  
-[StrongSORT](https://github.com/dyhBUPT/StrongSORT)[](https://arxiv.org/pdf/2202.13514.pdf) for Tracking
+###### This repository contains a highly configurable two-stage-tracker that adjusts to different deployment scenarios.
+
+###### [YOLOv5](https://github.com/ultralytics/yolov5) for Detection
+
+###### [StrongSORT](https://github.com/dyhBUPT/StrongSORT)[](https://arxiv.org/pdf/2202.13514.pdf) for Tracking
 
 ---
 
