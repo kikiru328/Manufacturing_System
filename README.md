@@ -1,13 +1,12 @@
 ## Introduction
 
+<font size='1'>
 This repository contains a highly configurable two-stage-tracker that adjusts to different deployment scenarios.  
 [YOLOv5](https://github.com/ultralytics/yolov5)  
 [StrongSORT](https://github.com/dyhBUPT/StrongSORT)[](https://arxiv.org/pdf/2202.13514.pdf)  
 [OSNet](https://github.com/KaiyangZhou/deep-person-reid)[](https://arxiv.org/abs/1905.00953),
-[OCSORT](https://github.com/noahcao/OC_SORT)[](https://arxiv.org/pdf/2203.14360.pdf)  
-and [ByteTrack](https://github.com/ifzhang/ByteTrack)[](https://arxiv.org/pdf/2110.06864.pdf).  
-They can track any object that your Yolov5 model was trained to detect.
-
+[OCSORT](https://github.com/noahcao/OC_SORT)[](https://arxiv.org/pdf/2203.14360.pdf) and [ByteTrack](https://github.com/ifzhang/ByteTrack)[](https://arxiv.org/pdf/2110.06864.pdf).
+</font>
 ```
 # Brief Folder Tree
 
@@ -49,4 +48,7 @@ They can track any object that your Yolov5 model was trained to detect.
 ┃ ┗ 📜val.py
 ┣ 📜Manufacturing_gui.py
 ┗ 📜webcams.txt
+
+```
+
 ```
