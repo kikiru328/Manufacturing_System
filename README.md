@@ -140,16 +140,16 @@ for i, det in enumerate(pred):
       except Exception as e:
         print(e)
 ~~~
-i == webcam number and screen number by port
-function webcam1 == total functions `function webcam#`
+i == webcam number and screen number by port  
+function webcam1 == total functions `function webcam#`  
 
 
 # Start by
-(2023-01-06 : Delete install.exe )
+(2023-01-06 : Delete install.exe )  
 
-Should make exe file from `Archive` with `pyinstaller`
-- start install.exe
-- make environment ( 30 ~ 60 m by computer environment )
-- start program in desktop folder.
+Should make exe file from `Archive` with `pyinstaller`  
+- start install.exe  
+- make environment ( 30 ~ 60 m by computer environment )  
+- start program in desktop folder.  
 
 
