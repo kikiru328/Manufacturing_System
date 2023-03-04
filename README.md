@@ -155,4 +155,4 @@ Should make exe file from `Archive` with `pyinstaller`
 - make environment ( 30 ~ 60 m by computer environment )  
 - start program in desktop folder.  
 
-
+  
