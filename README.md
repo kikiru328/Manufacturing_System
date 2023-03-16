@@ -3,7 +3,6 @@ This repository contains a highly configurable two-stage-tracker that adjusts to
 
 #### [YOLOv5](https://github.com/ultralytics/yolov5) for Detection  [StrongSORT](https://github.com/dyhBUPT/StrongSORT)[](https://arxiv.org/pdf/2202.13514.pdf) for Tracking
 
-
 # Introduction
 컨베이어 벨트 시스템은 제조 공정에서 순서대로 제조를 가능하게 하는 장점이 있다.  
 하지만 사람이 제조할 시 불량률이 기계보다 높게 나온다는 단점이 있다. 또한 옵션이 많을 경우에는 불량률이 더욱더 증가한다.  
@@ -156,3 +155,6 @@ Should make exe file from `Archive` with `pyinstaller`
 - start program in desktop folder.  
 
   
+
+
+
