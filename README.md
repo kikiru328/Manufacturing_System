@@ -14,7 +14,7 @@ This repository contains a highly configurable two-stage-tracker that adjusts to
 count += 1 이 되며  해당 옵션을 제공하게 된다.  
 
 해당 옵션은 `screeninfo`를 이용해서 모니터에 제공한다.  
-
+ 
 GUI는 pyqt5로 개발하여 사용자의 편리성을 높였다.  
 
 <br/>
