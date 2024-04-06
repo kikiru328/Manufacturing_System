@@ -17,7 +17,7 @@ count += 1 이 되며  해당 옵션을 제공하게 된다.
  
 GUI는 pyqt5로 개발하여 사용자의 편리성을 높였다.  
 
-<br/>
+<br/> 
 <br/>
 
 The conveyor belt system has an advantage of enabling manufacturing in order in a manufacturing process.
