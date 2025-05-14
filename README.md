@@ -1,160 +1,100 @@
-#### Reference
-This repository contains a highly configurable two-stage-tracker that adjusts to different deployment scenarios.  
+![image](https://github.com/user-attachments/assets/e2f12c1e-0a6a-4dbf-a375-0a9dd3fb9ff3)# 제조 불량률 감소 목적 자동화 검수 시스템
 
-#### [YOLOv5](https://github.com/ultralytics/yolov5) for Detection  [StrongSORT](https://github.com/dyhBUPT/StrongSORT)[](https://arxiv.org/pdf/2202.13514.pdf) for Tracking
+YOLO + DeepSORT 기반의 실시간 검수 자동화 솔루션을 개발하여, 제조 현장의 검수 피로도와 불량률을 효과적으로 감소시킨 프로젝트입니다.
 
-# Introduction
-컨베이어 벨트 시스템은 제조 공정에서 순서대로 제조를 가능하게 하는 장점이 있다.  
-하지만 사람이 제조할 시 불량률이 기계보다 높게 나온다는 단점이 있다. 또한 옵션이 많을 경우에는 불량률이 더욱더 증가한다.  
-  
-따라서 제조시 옵션을 상시 제공하여 불량률을 줄일 수 있는 시스템을 개발해보았다.  
+## 개요
 
-객체 추적은 `yolov5-s` 모델을 사용하였고, 추적을 추적을 위해 `Deepsort` 알고리즘을 사용하였다.  
-이 프로그램은 추적 뿐 아니라 개수를 세야하기 떄문에 객체 중앙점을 기점으로 객체의 중앙점이 넘어설 때,  
-count += 1 이 되며  해당 옵션을 제공하게 된다.  
-
-해당 옵션은 `screeninfo`를 이용해서 모니터에 제공한다.  
- 
-GUI는 pyqt5로 개발하여 사용자의 편리성을 높였다.  
-
-<br/> 
-<br/>        
-
-The conveyor belt system has an advantage of enabling manufacturing in order in a manufacturing process.
-However, there is a disadvantage that the defect rate is higher than that of machines when manufactured by humans.  
-In addition, if there are many options, the defect rate increases even more.  
-
-Therefore, I have developed a system that can reduce the defect rate by always providing options during manufacturing.  
-
-The 'yolov5-s' model was used for object tracking, and the 'Deepsort' algorithm was used for tracking.
-Because this program requires not only tracking but also counting, when the center point of the object   
-exceeds the center point of the object, count + = 1 is given and the corresponding option is provided.  
-
-This option is provided to the monitor using `'screeninfo'`.  
- 
-GUI was developed as`pyqt5` to increase user convenience.  
-<br/>
-# Brief Folder Tree
-```
-📦Deepsort_yolov5
-┣ 📂Archive
-┃ ┣ 📂Functions
-┃ ┃ ┣ 📜install_packages.py      ━━━ # install requirements
-┃ ┃ ┗ 📜make_bat_shortcut.py
-┃ ┣ 📂Miniconda                  ━━━ # For distribute environments
-┃ ┣ 📜install_gui.py             ━━━ # install program gui
-┃ ┣ 📜install_UI.ui
-┃ ┣ 📜Manufacturing_UI.ui
-┃ ┗ 📜requirements.txt           ━━━ # For distribute environments
-┣ 📂Functions
-┃ ┣ 📂trackers
-┃ ┃ ┣ 📂bytetrack
-┃ ┃ ┣ 📂ocsort
-┃ ┃ ┣ 📂strong_sort
-┃ ┃ ┃ ┣ 📂configs
-┃ ┃ ┃ ┃ ┗ 📜strong_sort.yaml    ━┓
-┃ ┃ ┃ ┣ 📂sort                   ┃
-┃ ┃ ┃ ┣ 📜reid_multibackend.py   ┃
-┃ ┃ ┃ ┣ 📜strong_sort.py         ┃
-┃ ┃ ┃ ┗ 📜__init__.py            ┃
-┃ ┃ ┣ 📜multi_tracker_zoo.py    ━┻━ # Need to match the path "cfg.merge_from_file(Strong_sort.yaml Path)")
-┃ ┃ ┗ 📜__init__.py
-┃ ┣ 📂weights                   ━━━ # weigths for yolov5 model and strong_sort
-┃ ┃ ┣ 📜best.pt
-┃ ┃ ┣ 📜osnet_x0_25_msmt17.pt
-┃ ┣ 📂yolov5
-┃ ┃ ┣ 📂.github
-┃ ┃ ┣ 📂classify
-┃ ┃ ┣ 📂data
-┃ ┃ ┣ 📂models
-┃ ┃ ┣ 📂utils
-┃ ┃ ┃ ┣ 📜plots.py             ━━━ # Find center point
-┃ ┣ 📜Manufacturing_function.py
-┃ ┣ 📜reid_export.py
-┃ ┗ 📜val.py
-┣ 📜Manufacturing_gui.py       ━━━ # GUI for using program (pyqt5) 
-┗ 📜webcams.txt                ━━━ # Input Videos
-
-```
-
-# Find Center point
-Yolov5 - Utils - plots 내부에 아래와 같이 추가한다.  
-<details>
-<summary><font size='2'>Plots_code</font></summary>
-<div markdown='1'>
-
-~~~python
-    def box_label(self, box, label='', color=(128, 128, 128), txt_color=(255, 255, 255)):
-        # Add one xyxy box to image with label
-        if self.pil or not is_ascii(label):
-            self.draw.rectangle(box, width=self.lw, outline=color)  # box
-            if label:
-                w, h = self.font.getsize(label)  # text width, height
-                outside = box[1] - h >= 0  # label fits outside box
-                self.draw.rectangle(
-                    (box[0], box[1] - h if outside else box[1], box[0] + w + 1,
-                     box[1] + 1 if outside else box[1] + h + 1),
-                    fill=color,
-                )
-                # self.draw.text((box[0], box[1]), label, fill=txt_color, font=self.font, anchor='ls')  # for PIL>8.0
-                self.draw.text((box[0], box[1] - h if outside else box[1]), label, fill=txt_color, font=self.font)
-        else:  # cv2
-            p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
-            center_coordinates = (int(box[0] + (box[2]-box[0])/2), int(box[1] + (box[3] - box[1])/2))
-            cv2.rectangle(self.im, p1, p2, color, thickness=self.lw, lineType=cv2.LINE_AA)
-            cv2.circle(self.im, center_coordinates, radius=3, color=color, thickness=3)
-            if label:
-                tf = max(self.lw - 1, 1)  # font thickness
-                w, h = cv2.getTextSize(label, 0, fontScale=self.lw / 3, thickness=tf)[0]  # text width, height
-                outside = p1[1] - h >= 3
-                p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-                cv2.rectangle(self.im, p1, p2, color, -1, cv2.LINE_AA)  # filled
-                cv2.putText(self.im,
-                            label, (p1[0], p1[1] - 2 if outside else p1[1] + h + 2),
-                            0,
-                            self.lw / 3,
-                            txt_color,
-                            thickness=tf,
-                            lineType=cv2.LINE_AA
-~~~                            
-</div>
-</details>
-
-![Box_Label in Yolov5](https://user-images.githubusercontent.com/60537388/210808158-dd82fed1-82de-49de-8aee-bc25039e19ba.png)
-
-# Tracker
-📜Manufacturing_functions.py INSIDE.    
-> `function read_order` = excel reader  
-> `function webcam_start_function` = load data from webcam  
-> `function common_save_functions` = save label adn vid, crop, show_vid  
-> `Class Count - count_#_functions` = count when object center point is over the standard line
-> `function draw_text` = draw text over the image to show options 
-> `function screen_show` = make image showing for screen by webcams.
-> `function webcam#` = make total functions  
-
-Running after  
-~~~python
-# Process detections
-for i, det in enumerate(pred):
-  if i == 0:
-      try:
-        im0, save_dir, save_path, txt_file_name = webcam1(webcam, path, im, im0s, dataset, s, save_dir, source, curr_frames, line_thickness,save_crop, i, det, names, outputs, tracker_list,dt,t3,t2,tracking_method,save_txt, frame_idx, save_vid, show_vid, hide_labels, hide_conf, hide_class)
-      except Exception as e:
-        print(e)
-~~~
-i == webcam number and screen number by port  
-function webcam1 == total functions `function webcam#`  
+- 기간: 2022.10 ~ 2022.12 (3개월)
+- 기관: AGP
+- 역할: 기획 / 데이터 수집 / 모델 설계 및 학습 / GUI 개발
+- 기술 스택: Python, PyTorch, YOLOv5, DeepSORT, OpenCV, PyQt5
 
 
-# Start by
-(2023-01-06 : Delete install.exe )  
+## 프로젝트 배경
 
-Should make exe file from `Archive` with `pyinstaller`  
-- start install.exe  
-- make environment ( 30 ~ 60 m by computer environment )  
-- start program in desktop folder.  
-
-  
+- 맞춤형 제품의 조합이 증가하며 검수 과정에서 피로도가 급증
+- 조합 실수로 인해 불량률 및 고객 CS 증가
+- 제조 환경은 네트워크 제한이 있어 웹 기반 시스템 도입 불가
 
 
+## 문제 정의
 
+- 옵션 조합 폭발 → 검수 단계 증가 → 피로도 상승
+- 객체 탐지 정확도 낮음 (조도, 유사도, 라벨 오류)
+- 비개발자 대상 → 사용이 쉬운 UI 필요
+
+
+## 해결 방안 개요
+
+| 문제 상황 | 해결 솔루션 |
+|-----------|--------------|
+| 조합 폭발, 피로도 증가 | YOLO로 제품 탐지, DeepSORT로 옵션 추적하여 자동 카운트 |
+| 탐지 정확도 저하 | 실데이터 기반 재수집 + 수작업 라벨링으로 정확도 향상 |
+| 사용 어려움 | PyQt5 기반 GUI + 설치형 프로그램으로 배포 |
+
+
+## 시스템 구조
+### 전체 구조
+![Image](https://github.com/user-attachments/assets/ec3dfe22-39a2-425b-a663-81b99fbe7383)
+
+### 세부 구조
+![Image](https://github.com/user-attachments/assets/6d3c4dc6-efea-4dd3-8fb5-8cb2f4b54f15)
+
+- YOLO: 제품 탐지
+- DeepSORT: 객체 ID 추적
+- OJB(판단 기준선) 기준으로 개수 카운트
+- 검수 결과 GUI 실시간 표시
+
+## 데이터 수집 및 전처리
+
+![Image](https://github.com/user-attachments/assets/f7b63bd0-b2d5-4c96-962b-43bc57a7dc51)
+
+- 직접 제조현장 방문, 50개 이상 옵션 영상 수집
+- 약 400장의 BBox 수작업 어노테이션
+- 조도 보정, 중복 제거, 클래스 불균형 조정
+
+
+## 모델 학습 및 성능 개선
+
+![image](https://github.com/user-attachments/assets/4d04ea37-b5e9-4e98-b796-0d6c08a4e605)
+
+| 항목 | 초기 YOLO | 개선 후 YOLO |
+|------|-----------|--------------|
+| mAP@0.5 | 0.65 | **0.80** |
+
+- 오탐 원인을 분석해 데이터셋 개선
+- 수작업 라벨 검수 및 추가 수집
+- 재학습을 통해 실시간 추론에서도 정확도 확보
+
+
+## 추적 및 판단 로직
+
+![image](https://github.com/user-attachments/assets/a5fe646e-13a4-4bbc-8ab7-3472ea0db201)
+
+![image](https://github.com/user-attachments/assets/c801e6b5-7aff-48bd-a2e9-4be843de237c)
+
+- 중심점 이동 경로 설정
+- 조건 기준선 통과 시 → 카운트 트리거 발생
+- 좌→우 방향 전용 필터링 조건 적용
+
+
+## 🖥 GUI 및 설치형 프로그램 개발
+
+![image](https://github.com/user-attachments/assets/0e0dd884-6ae9-49b5-9289-a21275ed31f7)
+
+![image](https://github.com/user-attachments/assets/c7f97723-cfab-4f60-815e-61be728d875d)
+
+- PyQt 기반 로컬 GUI
+- 탐지 결과를 영상에 실시간 시각화
+- 옵션명, 개수, 상태(OK/NG)를 표시
+- 네트워크 없이도 사용 가능한 `.exe` 설치형으로 배포
+
+## 프로젝트 성과
+
+- 정확도 0.65 → 0.80 향상
+- 현장 적용 시도 후 **작업 시간 단축 및 실수 감소 확인**
+- 비개발자도 사용할 수 있도록 UX 최적화
+
+## Reference
+- [YOLOv5](https://github.com/ultralytics/yolov5) for Object Detection  
+- [StrongSORT](https://github.com/dyhBUPT/StrongSORT) for Object Tracking  
