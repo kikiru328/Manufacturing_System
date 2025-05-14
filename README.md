@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e2f12c1e-0a6a-4dbf-a375-0a9dd3fb9ff3)# 제조 불량률 감소 목적 자동화 검수 시스템
+# 제조 불량률 감소 목적 자동화 검수 시스템
 
 YOLO + DeepSORT 기반의 실시간 검수 자동화 솔루션을 개발하여, 제조 현장의 검수 피로도와 불량률을 효과적으로 감소시킨 프로젝트입니다.
 
